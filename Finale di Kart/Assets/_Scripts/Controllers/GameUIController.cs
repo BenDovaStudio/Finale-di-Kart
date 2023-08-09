@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
-using _Scripts.Test_Scripts;
 using _Scripts.UI;
-using IngameDebugConsole;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Scripts.Controllers {
 	
@@ -13,8 +11,8 @@ namespace _Scripts.Controllers {
 	public class GameUIController : MonoBehaviour {
 		#region Serialized Data Members
 
-		[SerializeField]
-		private GameObject ServerListParent;
+		[FormerlySerializedAs("ServerListParent")] [SerializeField]
+		private GameObject serverListParent;
 
 		[SerializeField]
 		private ServerListElement serverListElementPrefab;
@@ -33,7 +31,7 @@ namespace _Scripts.Controllers {
 		#region Builtin Methods
 
 		private void Start() {
-			InvokeRepeating(nameof(UpdateServerList), 3f, 3f);
+			InvokeRepeating(nameof(UpdateServerList), 2f, 2f);
 		}
 
 		#endregion
@@ -42,7 +40,7 @@ namespace _Scripts.Controllers {
 		#region MyRegion
 
 		public async void UpdateServerList() {
-			QueryResponse response = await LobbyTest.QueryLobbies();
+			QueryResponse response = await NetworkController.QueryLobbies();
 			// Debug.Log($"Server List size: {_serverList.Count}");
 			// bool firstElement = true;
 			foreach (ServerListElement serverListElem in _serverList) {
@@ -58,9 +56,9 @@ namespace _Scripts.Controllers {
 			if (response != null) {
 				var resultList = response.Results;
 				foreach (Lobby lobby in resultList) {
-					ServerListElement tempHolder = Instantiate(serverListElementPrefab, ServerListParent.transform);
-					tempHolder.transform.SetParent(ServerListParent.transform);
-					tempHolder.UpdateValues(lobby.Name, lobby.HostId, lobby.Players.Count, lobby.MaxPlayers);
+					ServerListElement tempHolder = Instantiate(serverListElementPrefab, serverListParent.transform);
+					tempHolder.transform.SetParent(serverListParent.transform);
+					tempHolder.UpdateValues(lobby.Name, lobby.HostId, lobby.Players.Count, lobby.MaxPlayers, lobby);
 					_serverList.Add(tempHolder);
 				}
 			}

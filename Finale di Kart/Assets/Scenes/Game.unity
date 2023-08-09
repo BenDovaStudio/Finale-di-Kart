@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028328, g: 0.22571328, b: 0.3069218, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028346, g: 0.22571373, b: 0.30692244, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3705,8 +3705,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 593a2fe42fa9d37498c96f9a383b6521, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RunInBackground: 1
-  LogLevel: 0
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1552437585}
@@ -3731,6 +3729,8 @@ MonoBehaviour:
     SpawnTimeout: 1
     EnableNetworkLogs: 1
     OldPrefabList: []
+  RunInBackground: 1
+  LogLevel: 0
 --- !u!4 &1552437587
 Transform:
   m_ObjectHideFlags: 0
@@ -4301,7 +4301,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c949f9d955989ecd2bc655c2bb63a2ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ServerListParent: {fileID: 722015163}
+  serverListParent: {fileID: 722015163}
   serverListElementPrefab: {fileID: 5156173903567398441, guid: 8ccc177dc0d56f19bb4ea0eabaf67b37,
     type: 3}
 --- !u!1 &1771140576
@@ -5357,6 +5357,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Server List Element
+      objectReference: {fileID: 0}
+    - target: {fileID: 5682606941362913112, guid: 8ccc177dc0d56f19bb4ea0eabaf67b37,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5682606941362913112, guid: 8ccc177dc0d56f19bb4ea0eabaf67b37,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8ccc177dc0d56f19bb4ea0eabaf67b37, type: 3}

@@ -1,11 +1,10 @@
-using System;
 using UnityEngine;
 
-namespace _Scripts {
+namespace _Scripts.Controllers {
 	public class GameController : MonoBehaviour {
 
 
-		private static GameController Singleton;
+		public static GameController Instance;
 		
 		
 		[SerializeField]
@@ -20,8 +19,8 @@ namespace _Scripts {
 
 
 		private void Awake() {
-			if (Singleton != null) Destroy(gameObject);
-			else Singleton = this;
+			if (Instance != null) Destroy(gameObject);
+			else Instance = this;
 		}
 
 		private void OnEnable() {

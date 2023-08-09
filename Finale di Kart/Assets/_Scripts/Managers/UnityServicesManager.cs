@@ -1,13 +1,16 @@
 using System;
+using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 
-namespace _Scripts.Managers {
-    public class UnityServicesManager : MonoBehaviour {
+namespace _Scripts.Managers
+{
+    public class UnityServicesManager : MonoBehaviour
+    {
         #region Variables
 
         public static UnityServicesManager Instance { get; private set; }
-        
+
         public bool ServiceInitialized { get; private set; }
 
         #endregion
@@ -19,23 +22,32 @@ namespace _Scripts.Managers {
 
         public static NetworkStatus OnNetworkCheck;
 
+        private string playerName = "User";
+
+        private InitializationOptions initializationOptions;
+
+
         #endregion
-        
-        
+
+
         #region Builtin Methods
 
-        private void Awake() {
+        private void Awake()
+        {
+            playerName += DateTime.Now.Second.ToString();
+            initializationOptions = new InitializationOptions();
+            initializationOptions.SetProfile(playerName);
+
             if (Instance is null) Instance = this;
-            else {
+            else
+            {
                 Destroy(gameObject);
                 Debug.LogWarning("Should not have two Unity Service Managers!!!");
-                
-                    ....
-                        /// Implement the new scene and set up a proper main menu and game sequence
             }
 
 
             InitializeServices();
+            AuthenticateUser();
         }
 
         #endregion
@@ -44,18 +56,37 @@ namespace _Scripts.Managers {
 
         #region Custom Methods
 
-        public async void InitializeServices() {
-            if (Application.internetReachability != NetworkReachability.NotReachable) {
-                try {
+        public async void InitializeServices()
+        {
+
+            if (Application.internetReachability != NetworkReachability.NotReachable)
+            {
+                try
+                {
                     await UnityServices.InitializeAsync();
                 }
-                catch (Exception e) {
+                catch (ServicesInitializationException e)
+                {
                     Debug.LogWarning(e);
                 }
             }
-            else {
+            else
+            {
                 OnNetworkCheck?.Invoke(NetworkReachability.NotReachable);
             }
+        }
+
+
+        private async void AuthenticateUser()
+        {
+            AuthenticationService.Instance.SignedIn += OnUserSignIn;
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        }
+
+        private void OnUserSignIn()
+        {
+            Debug.Log($"User has signed in with PlayerId: {AuthenticationService.Instance.PlayerId}");
+            AuthenticationService.Instance.SignedIn -= OnUserSignIn;
         }
 
         #endregion
