@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using IngameDebugConsole;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
@@ -44,21 +45,22 @@ namespace _Scripts.Controllers {
 
 
 		private void Update() {
-			LobbyHeartbeat();
-			HandleSecretCode();
+			// LobbyHeartbeat();
+			// HandleSecretCode();
 		}
 
 		#endregion
 
 		#region Custom Methods
 
-
-		private void CreateServer() {
+ // [ConsoleMethod("CreateServer", "Creates a Lobby with specified number of players")]
+		public void CreateServer() {
 			CreateRelay();
 		}
 
 		public async void JoinServer(Lobby passedLobby) {
 			try {
+				Debug.Log("Joining Lobby by ID");
 				await LobbyService.Instance.JoinLobbyByIdAsync(passedLobby.Id);
 				
 				JoinRelay(passedLobby.Data[AppConstants.RelayCode].Value);
@@ -74,6 +76,7 @@ namespace _Scripts.Controllers {
 			heartbeatTimer -= Time.deltaTime;
 			if (heartbeatTimer < 0) {
 				heartbeatTimer = AppConstants.HeartbeatCooldown;
+				Debug.Log("Sending Heartbeat");
 				await LobbyService.Instance.SendHeartbeatPingAsync(serverLobby.Id);
 			}
 		}
@@ -124,6 +127,7 @@ namespace _Scripts.Controllers {
 					}
 				};
 				nodeType = NodeType.Server;
+				Debug.Log("Creating Lobby");
 				serverLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayersExclusiveOfSelf, lobbyOptions);
 			}
 			catch (LobbyServiceException e) {
@@ -134,6 +138,7 @@ namespace _Scripts.Controllers {
 
 		public static async Task<QueryResponse> QueryLobbies() {
 			try {
+				Debug.Log("Querying For Lobby");
 				QueryResponse queryResponse = await LobbyService.Instance.QueryLobbiesAsync();
 				return queryResponse;
 			}
@@ -145,6 +150,7 @@ namespace _Scripts.Controllers {
 
 		public static async Task<QueryResponse> QueryLobbies(QueryLobbiesOptions options) {
 			try {
+				Debug.Log("Querying Lobby with options");
 				QueryResponse queryResponse = await LobbyService.Instance.QueryLobbiesAsync(options);
 				return queryResponse;
 			}

@@ -47,7 +47,6 @@ namespace _Scripts.Managers
 
 
             InitializeServices();
-            AuthenticateUser();
         }
 
         #endregion
@@ -64,6 +63,7 @@ namespace _Scripts.Managers
                 try
                 {
                     await UnityServices.InitializeAsync();
+                    AuthenticateUser();
                 }
                 catch (ServicesInitializationException e)
                 {

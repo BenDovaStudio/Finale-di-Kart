@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using _Scripts.UI;
 using Unity.Services.Lobbies.Models;
@@ -22,6 +23,7 @@ namespace _Scripts.Controllers {
 
 		#region Variables
 
+		public static GameUIController Instance;
 		private static List<ServerListElement> _serverList = new List<ServerListElement>();
 
 		#endregion
@@ -29,6 +31,16 @@ namespace _Scripts.Controllers {
 
 
 		#region Builtin Methods
+
+		private void Awake() {
+			if (Instance != null) {
+				Debug.Log($"{gameObject.name}: Please no double GameUI controller");
+				Destroy(gameObject);
+			}
+			else {
+				Instance = this;
+			}
+		}
 
 		private void Start() {
 			InvokeRepeating(nameof(UpdateServerList), 2f, 2f);
@@ -61,6 +73,13 @@ namespace _Scripts.Controllers {
 					tempHolder.UpdateValues(lobby.Name, lobby.HostId, lobby.Players.Count, lobby.MaxPlayers, lobby);
 					_serverList.Add(tempHolder);
 				}
+			}
+		}
+
+
+		public void ResetHighlight() {
+			foreach (var serverListElement in _serverList) {
+				serverListElement.SetHighlight(false);
 			}
 		}
 
