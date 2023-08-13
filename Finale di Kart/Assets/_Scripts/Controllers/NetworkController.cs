@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using _Scripts.UI;
@@ -263,15 +262,11 @@ namespace _Scripts.Controllers {
 				string playerId = AuthenticationService.Instance.PlayerId;
 				joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(joinedLobby.Id, new UpdateLobbyOptions());
 				await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, playerId);
+				GameUIController.Instance.HandlePlayerEndUI();
 			}
 			catch (LobbyServiceException e) {
 				Debug.Log(e);
 			}
-		}
-
-
-		private void HelloWorld() {
-			Debug.Log("Hello World");
 		}
 
 		#endregion

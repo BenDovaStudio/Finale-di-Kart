@@ -2716,7 +2716,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 818164131}
         m_TargetAssemblyTypeName: _Scripts.Controllers.NetworkController, Assembly-CSharp
-        m_MethodName: KillServer
+        m_MethodName: DisconnectFromServer
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5974,7 +5974,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1675224194
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6491,12 +6491,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serverListParent: {fileID: 722015163}
+  serverListTransform: {fileID: 836720281}
   serverListElementPrefab: {fileID: 5156173903567398441, guid: 8ccc177dc0d56f19bb4ea0eabaf67b37,
     type: 3}
-  serverListTransform: {fileID: 836720281}
-  serverButtonsTransform: {fileID: 1675224194}
   shouldUpdateLobby: 0
   lobbyQueryCooldown: 2.5
+  playerButtonGrpTransform: {fileID: 0}
+  serverButtonGrpTransform: {fileID: 1675224194}
 --- !u!1 &1771140576
 GameObject:
   m_ObjectHideFlags: 0

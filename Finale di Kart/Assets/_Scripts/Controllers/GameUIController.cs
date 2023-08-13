@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using _Scripts.UI;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Scripts.Controllers {
 
@@ -19,10 +20,10 @@ namespace _Scripts.Controllers {
 		[Header("ServerList")] [SerializeField]
 		private GameObject serverListParent;
 
+		[SerializeField] private Transform serverListTransform;
+
 		[SerializeField] private ServerListElement serverListElementPrefab;
 
-		[SerializeField] private Transform serverListTransform;
-		[SerializeField] private Transform serverButtonsTransform;
 
 		private static List<ServerListElement> _serverList = new List<ServerListElement>();
 
@@ -32,6 +33,17 @@ namespace _Scripts.Controllers {
 		[SerializeField] private bool shouldUpdateLobby;
 
 		[SerializeField] private float lobbyQueryCooldown = 2.5f;
+
+		#endregion
+
+
+		#region GameLoop
+
+		[Space] [Header("Game Loop")] [SerializeField]
+		private Transform playerButtonGrpTransform;
+
+		[FormerlySerializedAs("serverButtonsTransform")] [SerializeField]
+		private Transform serverButtonGrpTransform;
 
 		#endregion
 
@@ -65,7 +77,7 @@ namespace _Scripts.Controllers {
 
 		public void SetDefaultUI() {
 			if (serverListTransform) serverListTransform.gameObject.SetActive(true);
-			if (serverButtonsTransform) serverButtonsTransform.gameObject.SetActive(false);
+			if (serverButtonGrpTransform) serverButtonGrpTransform.gameObject.SetActive(false);
 		}
 
 		public void SetLobbyUpdate(bool shouldUpdate) {
@@ -110,16 +122,22 @@ namespace _Scripts.Controllers {
 
 		public void HandleServerStartUI() {
 			if (serverListTransform) serverListTransform.gameObject.SetActive(false);
-			if (serverButtonsTransform) serverButtonsTransform.gameObject.SetActive(true);
+			if (serverButtonGrpTransform) serverButtonGrpTransform.gameObject.SetActive(true);
 		}
 
 		public void HandleServerStopUI() {
-			if (serverButtonsTransform) serverButtonsTransform.gameObject.SetActive(false);
+			if (serverButtonGrpTransform) serverButtonGrpTransform.gameObject.SetActive(false);
 			if (serverListTransform) serverListTransform.gameObject.SetActive(true);
 		}
 
 		public void HandlePlayerStartUI() {
-			serverListTransform.gameObject.SetActive(false);
+			if (serverListTransform) serverListTransform.gameObject.SetActive(false);
+			if (playerButtonGrpTransform) playerButtonGrpTransform.gameObject.SetActive(true);
+		}
+
+		public void HandlePlayerEndUI() {
+			if (playerButtonGrpTransform) playerButtonGrpTransform.gameObject.SetActive(false);
+			if (serverListTransform) serverListTransform.gameObject.SetActive(true);
 		}
 
 		#endregion
