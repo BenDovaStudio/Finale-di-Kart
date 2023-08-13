@@ -55,14 +55,14 @@ namespace _Scripts.Managers
 
         #region Custom Methods
 
-        public async void InitializeServices()
+        private async void InitializeServices()
         {
 
             if (Application.internetReachability != NetworkReachability.NotReachable)
             {
                 try
                 {
-                    await UnityServices.InitializeAsync();
+                    await UnityServices.InitializeAsync(initializationOptions);
                     AuthenticateUser();
                 }
                 catch (ServicesInitializationException e)

@@ -1,4 +1,3 @@
-using System;
 using _Scripts.Controllers;
 using TMPro;
 using Unity.Services.Lobbies.Models;
@@ -26,6 +25,17 @@ namespace _Scripts.UI {
         #endregion
 
 
+        #region Custom Events
+        
+        // Lock variable
+        private static bool _eventLocked = false;
+
+        public delegate void LobbySelection(Lobby lobby);
+
+        public static LobbySelection OnLobbySelect;
+
+        #endregion
+
         #region Builtin Methods
 
         private void OnEnable() {
@@ -45,20 +55,27 @@ namespace _Scripts.UI {
             myLobby = lobby;
             nameTextObject.text = serverName;
             // regionTextObject.text = serverRegion;
-            playersTextObject.text = $"{currentPlayers}/{maximumPlayers}";
+            playersTextObject.text = $"{currentPlayers-1}/{maximumPlayers-1}";
         }
-
-        private void OnClickMethod() {
-            // TODO - Join Lobby + Server code here
-            // NetworkController.Instance.JoinServer(myLobby);
-            Debug.Log($"Clicked on {gameObject.name}");
-            GameUIController.Instance.ResetHighlight();
-            SetHighlight();
-        }
-
 
         public void SetHighlight(bool yes = true) {
             highlight.gameObject.SetActive(yes);
+        }
+
+        #endregion
+
+
+        #region Custom Event Methods
+
+        private void OnClickMethod() {
+            if(!_eventLocked) {
+                _eventLocked = true;
+                Debug.Log($"Clicked on {gameObject.name}");
+                GameUIController.Instance.ResetHighlight();
+                OnLobbySelect?.Invoke(myLobby);
+                SetHighlight();
+                _eventLocked = false;
+            }
         }
 
         #endregion

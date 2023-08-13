@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using IngameDebugConsole;
+using _Scripts.UI;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
+using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
@@ -12,8 +14,6 @@ using UnityEngine;
 
 namespace _Scripts.Controllers {
 	public class NetworkController : MonoBehaviour {
-
-
 		#region Variables
 
 		public static NetworkController Instance { private set; get; }
@@ -22,64 +22,90 @@ namespace _Scripts.Controllers {
 
 		private string relayJoinCode = "";
 
-		private Lobby serverLobby;
+		private Lobby createdLobby;
+		private Lobby selectedLobby;
+		private Lobby joinedLobby;
+		
 		private float heartbeatTimer;
+		private readonly float heartbeatCooldown = AppConstants.HeartbeatCooldown;
 
 
-		private const string ServerSecretCode = "createserver0110";
-		private string enteredSecretCode = "";
-		private float cooldown;
+		private readonly KeyCode[] serverSecretCode = {
+			KeyCode.C, KeyCode.R, KeyCode.E, KeyCode.A, KeyCode.T, KeyCode.E, KeyCode.S, KeyCode.E, KeyCode.R, KeyCode.V, KeyCode.E, KeyCode.R
+		};
+
+		private List<KeyCode> enteredCode = new List<KeyCode>();
+		private readonly float secretCodeCooldown = AppConstants.SecretCodeCooldown;
+		private float lastKeyPressTime;
 
 		#endregion
 
+		
 		#region Builtin Methods
 
 		private void Awake() {
 			if (Instance is null) Instance = this;
 			else Destroy(gameObject);
+
+			
+		}
+
+		private void OnEnable() {
+			ServerListElement.OnLobbySelect += OnLobbySelected;
+			NetworkManager.Singleton.OnServerStopped += OnServerDisconnect;
+			NetworkManager.Singleton.OnClientStopped += OnClientDisconnect;
+		}
+
+		private void OnDisable() {
+			ServerListElement.OnLobbySelect -= OnLobbySelected;
+			NetworkManager.Singleton.OnServerStopped -= OnServerDisconnect;
+			NetworkManager.Singleton.OnClientStopped -= OnClientDisconnect;
 		}
 
 		private void Start() {
 			heartbeatTimer = 0;
 		}
-
-
+        
 		private void Update() {
 			// LobbyHeartbeat();
-			// HandleSecretCode();
+			HandleLobbyHeartbeat();
+			HandleSecretCode();
 		}
 
 		#endregion
 
+		
 		#region Custom Methods
 
- // [ConsoleMethod("CreateServer", "Creates a Lobby with specified number of players")]
 		public void CreateServer() {
+			GameUIController.Instance.HandleServerStartUI();
 			CreateRelay();
 		}
-
-		public async void JoinServer(Lobby passedLobby) {
+        
+		private async void JoinServer(Lobby passedLobby) {
 			try {
-				Debug.Log("Joining Lobby by ID");
-				await LobbyService.Instance.JoinLobbyByIdAsync(passedLobby.Id);
-				
-				JoinRelay(passedLobby.Data[AppConstants.RelayCode].Value);
-				
+				passedLobby = await LobbyService.Instance.GetLobbyAsync(passedLobby.Id);
+				Debug.Log($"Joining Lobby: {passedLobby.Name} by ID");
+				joinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(passedLobby.Id);
+
+				JoinRelay(joinedLobby.Data[AppConstants.RelayCode].Value);
+
 			}
 			catch (LobbyServiceException e) {
 				Debug.Log(e);
 			}
 		}
 
-		private async void LobbyHeartbeat() {
-			if (serverLobby == null) return;
+		private async void HandleLobbyHeartbeat() {
+			if (createdLobby == null) return;
 			heartbeatTimer -= Time.deltaTime;
 			if (heartbeatTimer < 0) {
-				heartbeatTimer = AppConstants.HeartbeatCooldown;
+				heartbeatTimer = heartbeatCooldown;
 				Debug.Log("Sending Heartbeat");
-				await LobbyService.Instance.SendHeartbeatPingAsync(serverLobby.Id);
+				await LobbyService.Instance.SendHeartbeatPingAsync(createdLobby.Id);
 			}
 		}
+
 		private async void CreateRelay() {
 			try {
 				Allocation allocation = await RelayService.Instance.CreateAllocationAsync(10);
@@ -91,13 +117,13 @@ namespace _Scripts.Controllers {
 				NetworkManager.Singleton.StartServer();
 				QueryResponse lobbyResponse = await QueryLobbies();
 				int serverNumber = lobbyResponse.Results.Count;
-				CreateLobby($"Server {serverNumber:D2}", 10);
+				CreateLobby($"Server {serverNumber:D2}", 11);
 			}
 			catch (RelayServiceException e) {
 				Debug.Log(e);
 			}
 		}
-		
+
 		private async void JoinRelay(string joinCode) {
 			try {
 				Debug.Log($"Joining relay with: {joinCode}");
@@ -107,6 +133,7 @@ namespace _Scripts.Controllers {
 
 				NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
 
+				GameUIController.Instance.HandlePlayerStartUI();
 				nodeType = NodeType.Client;
 				NetworkManager.Singleton.StartClient();
 
@@ -115,7 +142,8 @@ namespace _Scripts.Controllers {
 				Debug.Log(e);
 			}
 		}
-		private async void CreateLobby(string lobbyName, int maxPlayersExclusiveOfSelf) {
+
+		private async void CreateLobby(string lobbyName, int maxPlayersInclusiveOfSelf) {
 			try {
 				var lobbyOptions = new CreateLobbyOptions() {
 					IsPrivate = false,
@@ -128,13 +156,12 @@ namespace _Scripts.Controllers {
 				};
 				nodeType = NodeType.Server;
 				Debug.Log("Creating Lobby");
-				serverLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayersExclusiveOfSelf, lobbyOptions);
+				createdLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayersInclusiveOfSelf, lobbyOptions);
 			}
 			catch (LobbyServiceException e) {
 				Debug.Log(e);
 			}
 		}
-
 
 		public static async Task<QueryResponse> QueryLobbies() {
 			try {
@@ -159,50 +186,121 @@ namespace _Scripts.Controllers {
 				return null;
 			}
 		}
-
-
+        
 		private void HandleSecretCode() {
-			if (nodeType is not NodeType.None) return;
-			if (enteredSecretCode == ServerSecretCode) {
-				CreateServer();
-				return;
+			foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode))) {
+				if (Input.GetKeyDown(keyCode)) {
+					lastKeyPressTime = Time.time; // Update the last key press time
+
+					enteredCode.Add(keyCode);
+
+					if (enteredCode.Count > serverSecretCode.Length) {
+						enteredCode.RemoveAt(0);
+					}
+
+					if (enteredCode.Count == serverSecretCode.Length) {
+						CheckSecretCode();
+					}
+				}
 			}
-			cooldown -= Time.deltaTime;
-			if (Input.GetKeyUp(KeyCode.C)) {
-				ConcatCode('c');
-			}
-			else if (Input.GetKeyUp(KeyCode.R)) {
-				ConcatCode('r');
-			}
-			else if (Input.GetKeyUp(KeyCode.E)) {
-				ConcatCode('e');
-			}
-			else if (Input.GetKeyUp(KeyCode.A)) {
-				ConcatCode('a');
-			}
-			else if (Input.GetKeyUp(KeyCode.T)) {
-				ConcatCode('t');
-			}
-			else if (Input.GetKeyUp(KeyCode.S)) {
-				ConcatCode('s');
-			}
-			else if (Input.GetKeyUp(KeyCode.V)) {
-				ConcatCode('v');
-			}
-			else if (Input.GetKeyUp(KeyCode.Keypad0) || Input.GetKeyUp(KeyCode.Alpha0)) {
-				ConcatCode('0');
-			}
-			else if (Input.GetKeyUp(KeyCode.Keypad1) || Input.GetKeyUp(KeyCode.Alpha1)) {
-				ConcatCode('1');
+
+			// Check if the input has timed out
+			if (Time.time - lastKeyPressTime > secretCodeCooldown) {
+				enteredCode.Clear(); // Reset the input after timeout
 			}
 		}
 
-		private void ConcatCode(char character) {
-			if (cooldown > 0) {
-				enteredSecretCode += character;
-				cooldown = AppConstants.SecretCodeCooldown;
+		private void CheckSecretCode() {
+			if (enteredCode.Count == serverSecretCode.Length) {
+				// Debug.Log($"Code Entered: {enteredCode}");
+				bool codeMatch = true;
+				for (int i = 0; i < serverSecretCode.Length; i++) {
+					if (enteredCode[i] != serverSecretCode[i]) {
+						codeMatch = false;
+						break;
+					}
+
+					Debug.Log($"match at index {i}");
+				}
+
+				if (codeMatch) {
+					Debug.Log("Code Matched!");
+					CreateServer();
+				}
 			}
-			else enteredSecretCode = "";
+
+			enteredCode.Clear();
+		}
+
+		public async void KillServer() {
+			await DeleteLobby();
+			NetworkManager.Singleton.Shutdown();
+			GameUIController.Instance.HandleServerStopUI();
+		}
+
+		private async Task DeleteLobby() {
+			if (createdLobby != null) {
+				try {
+					await LobbyService.Instance.DeleteLobbyAsync(createdLobby.Id);
+					createdLobby = null;
+				}
+				catch (LobbyServiceException e) {
+					Debug.Log(e);
+				}
+			}
+		}
+
+		public void ConnectToServer() {
+			if (selectedLobby == null) {
+				Debug.Log("No Server Selected");
+				return;
+			}
+			JoinServer(selectedLobby);
+		}
+
+		public async void DisconnectFromServer() {
+			try {
+				string playerId = AuthenticationService.Instance.PlayerId;
+				joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(joinedLobby.Id, new UpdateLobbyOptions());
+				await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, playerId);
+			}
+			catch (LobbyServiceException e) {
+				Debug.Log(e);
+			}
+		}
+
+
+		private void HelloWorld() {
+			Debug.Log("Hello World");
+		}
+
+		#endregion
+
+
+		#region Custom Event Methods
+
+		private async void OnApplicationQuit() {
+			await DeleteLobby();
+			if (nodeType != NodeType.None) {
+				NetworkManager.Singleton.Shutdown();
+			}
+		}
+		
+		private void OnLobbySelected(Lobby lobby) {
+			Debug.Log($"Server Selected: {lobby.Name} [{lobby.Id}]");
+			selectedLobby = lobby;
+		}
+
+		private void OnNetworkInstanceShutdown() {
+			GameUIController.Instance.SetDefaultUI();
+		}
+
+		private void OnServerDisconnect(bool value) {
+			Debug.Log($"Server Disconnected : ({value})");
+		}
+
+		private void OnClientDisconnect(bool value) {
+			Debug.Log($"Client Disconnected : ({value})");
 		}
 
 		#endregion

@@ -1,33 +1,41 @@
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using _Scripts.UI;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _Scripts.Controllers {
-	
-	
-	
+
+
+
 	public class GameUIController : MonoBehaviour {
-		#region Serialized Data Members
-
-		[FormerlySerializedAs("ServerListParent")] [SerializeField]
-		private GameObject serverListParent;
-
-		[SerializeField]
-		private ServerListElement serverListElementPrefab;
-
-		#endregion
-
-
 		#region Variables
 
 		public static GameUIController Instance;
+
+
+		#region ServerList
+
+		[Header("ServerList")] [SerializeField]
+		private GameObject serverListParent;
+
+		[SerializeField] private ServerListElement serverListElementPrefab;
+
+		[SerializeField] private Transform serverListTransform;
+		[SerializeField] private Transform serverButtonsTransform;
+
 		private static List<ServerListElement> _serverList = new List<ServerListElement>();
+
+
+		private float lastUpdateTime;
+		private bool canUpdateLobby = true;
+		[SerializeField] private bool shouldUpdateLobby;
+
+		[SerializeField] private float lobbyQueryCooldown = 2.5f;
 
 		#endregion
 
+		#endregion
 
 
 		#region Builtin Methods
@@ -42,29 +50,36 @@ namespace _Scripts.Controllers {
 			}
 		}
 
-		private void Start() {
-			InvokeRepeating(nameof(UpdateServerList), 2f, 2f);
+		private void OnEnable() {
+			SetDefaultUI();
+		}
+
+		private void Update() {
+			UpdateServerList();
 		}
 
 		#endregion
 
 
-		#region MyRegion
+		#region Custom Methods
 
-		public async void UpdateServerList() {
+		public void SetDefaultUI() {
+			if (serverListTransform) serverListTransform.gameObject.SetActive(true);
+			if (serverButtonsTransform) serverButtonsTransform.gameObject.SetActive(false);
+		}
+
+		public void SetLobbyUpdate(bool shouldUpdate) {
+			shouldUpdateLobby = shouldUpdate;
+		}
+
+		private async Task UpdateLobbyList() {
+			lastUpdateTime = Time.unscaledTime;
 			QueryResponse response = await NetworkController.QueryLobbies();
-			// Debug.Log($"Server List size: {_serverList.Count}");
-			// bool firstElement = true;
 			foreach (ServerListElement serverListElem in _serverList) {
-				/*if (firstElement) {
-					firstElement = false;
-					continue;
-				}*/
-				// Debug.Log($"Deleting Element");
 				Destroy(serverListElem.gameObject);
 			}
-			_serverList.Clear();
 
+			_serverList.Clear();
 			if (response != null) {
 				var resultList = response.Results;
 				foreach (Lobby lobby in resultList) {
@@ -76,11 +91,35 @@ namespace _Scripts.Controllers {
 			}
 		}
 
+		private async void UpdateServerList() {
+			if (serverListTransform.gameObject.activeInHierarchy && canUpdateLobby && shouldUpdateLobby) {
+				if (Time.unscaledTime - lastUpdateTime > lobbyQueryCooldown) {
+					canUpdateLobby = false;
+					await UpdateLobbyList();
+					lastUpdateTime = Time.unscaledTime;
+					canUpdateLobby = true;
+				}
+			}
+		}
 
 		public void ResetHighlight() {
 			foreach (var serverListElement in _serverList) {
 				serverListElement.SetHighlight(false);
 			}
+		}
+
+		public void HandleServerStartUI() {
+			if (serverListTransform) serverListTransform.gameObject.SetActive(false);
+			if (serverButtonsTransform) serverButtonsTransform.gameObject.SetActive(true);
+		}
+
+		public void HandleServerStopUI() {
+			if (serverButtonsTransform) serverButtonsTransform.gameObject.SetActive(false);
+			if (serverListTransform) serverListTransform.gameObject.SetActive(true);
+		}
+
+		public void HandlePlayerStartUI() {
+			serverListTransform.gameObject.SetActive(false);
 		}
 
 		#endregion
