@@ -3,7 +3,32 @@ guid: 39176d505166cd34a905c723fec01cd1
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DirectionalArrows
+    second: {fileID: 2100000, guid: f22e1de69f785f94b83b09ca816855d7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Road - Bound Lines
+    second: {fileID: 2100000, guid: ed520d4d622c46441b1a0e6744cd2e49, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Road - Mid Lines
+    second: {fileID: 2100000, guid: d41f22f81010c514c8dc0232b13836af, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Road - Pavement
+    second: {fileID: 2100000, guid: 06f99dce27eafa444b7711a7ac001d96, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Road_
+    second: {fileID: 2100000, guid: bd3ba8341243a3d43ae1ea02066b5063, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
