@@ -55,7 +55,7 @@ namespace _Scripts.UI {
             myLobby = lobby;
             nameTextObject.text = serverName;
             // regionTextObject.text = serverRegion;
-            playersTextObject.text = $"{currentPlayers-1}/{maximumPlayers-1}";
+            playersTextObject.text = $"{currentPlayers - 1}/{maximumPlayers - 1}";
         }
 
         public void SetHighlight(bool yes = true) {
