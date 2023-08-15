@@ -70,7 +70,7 @@ namespace _Scripts.UI {
         private void OnClickMethod() {
             if(!_eventLocked) {
                 _eventLocked = true;
-                Debug.Log($"Clicked on {gameObject.name}");
+                // Debug.Log($"Clicked on {gameObject.name}");
                 GameUIController.Instance.ResetHighlight();
                 OnLobbySelect?.Invoke(myLobby);
                 SetHighlight();

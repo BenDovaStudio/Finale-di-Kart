@@ -1,4 +1,5 @@
 using System;
+using _Scripts.Controllers;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
@@ -8,6 +9,8 @@ namespace _Scripts.Managers
     public class UnityServicesManager : MonoBehaviour
     {
         #region Variables
+
+        [SerializeField] private NetworkController networkController;
 
         public static UnityServicesManager Instance { get; private set; }
 
@@ -86,7 +89,14 @@ namespace _Scripts.Managers
         private void OnUserSignIn()
         {
             Debug.Log($"User has signed in with PlayerId: {AuthenticationService.Instance.PlayerId}");
+            InitNetworkController();
             AuthenticationService.Instance.SignedIn -= OnUserSignIn;
+        }
+
+        private void InitNetworkController() {
+            if (networkController == null) return;
+            Debug.Log("Network Controller Instantiated");
+            Instantiate(networkController);
         }
 
         #endregion

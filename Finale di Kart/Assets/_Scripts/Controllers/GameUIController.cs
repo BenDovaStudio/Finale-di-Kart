@@ -78,6 +78,7 @@ namespace _Scripts.Controllers {
 		public void SetDefaultUI() {
 			if (serverListTransform) serverListTransform.gameObject.SetActive(true);
 			if (serverButtonGrpTransform) serverButtonGrpTransform.gameObject.SetActive(false);
+			if (playerButtonGrpTransform) playerButtonGrpTransform.gameObject.SetActive(false);
 		}
 
 		public void SetLobbyUpdate(bool shouldUpdate) {

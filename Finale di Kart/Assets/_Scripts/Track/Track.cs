@@ -6,6 +6,10 @@ namespace _Scripts.Track {
 
         [SerializeField] private Transform endNode;
 
+        public Transform GetEndNode() {
+            return endNode;
+        }
+
         #endregion
     }
 }

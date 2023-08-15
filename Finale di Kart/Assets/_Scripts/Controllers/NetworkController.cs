@@ -1,7 +1,7 @@
+using Unity.Netcode;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using _Scripts.UI;
-using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
 using Unity.Services.Authentication;
@@ -21,9 +21,9 @@ namespace _Scripts.Controllers {
 
 		private string relayJoinCode = "";
 
-		private Lobby createdLobby;
-		private Lobby selectedLobby;
-		private Lobby joinedLobby;
+		private static Lobby _createdLobby;
+		private static Lobby _selectedLobby;
+		private static Lobby _joinedLobby;
 		
 		private float heartbeatTimer;
 		private readonly float heartbeatCooldown = AppConstants.HeartbeatCooldown;
@@ -50,6 +50,8 @@ namespace _Scripts.Controllers {
 		}
 
 		private void OnEnable() {
+			DontDestroyOnLoad(gameObject);
+			// Debug.Log("Done");
 			ServerListElement.OnLobbySelect += OnLobbySelected;
 			NetworkManager.Singleton.OnServerStopped += OnServerDisconnect;
 			NetworkManager.Singleton.OnClientStopped += OnClientDisconnect;
@@ -85,9 +87,9 @@ namespace _Scripts.Controllers {
 			try {
 				passedLobby = await LobbyService.Instance.GetLobbyAsync(passedLobby.Id);
 				Debug.Log($"Joining Lobby: {passedLobby.Name} by ID");
-				joinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(passedLobby.Id);
+				_joinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(passedLobby.Id);
 
-				JoinRelay(joinedLobby.Data[AppConstants.RelayCode].Value);
+				JoinRelay(_joinedLobby.Data[AppConstants.RelayCode].Value);
 
 			}
 			catch (LobbyServiceException e) {
@@ -96,12 +98,12 @@ namespace _Scripts.Controllers {
 		}
 
 		private async void HandleLobbyHeartbeat() {
-			if (createdLobby == null) return;
+			if (_createdLobby == null) return;
 			heartbeatTimer -= Time.deltaTime;
 			if (heartbeatTimer < 0) {
 				heartbeatTimer = heartbeatCooldown;
 				Debug.Log("Sending Heartbeat");
-				await LobbyService.Instance.SendHeartbeatPingAsync(createdLobby.Id);
+				await LobbyService.Instance.SendHeartbeatPingAsync(_createdLobby.Id);
 			}
 		}
 
@@ -133,7 +135,7 @@ namespace _Scripts.Controllers {
 				NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
 
 				GameUIController.Instance.HandlePlayerStartUI();
-				nodeType = NodeType.Client;
+				Instance.nodeType = NodeType.Client;
 				NetworkManager.Singleton.StartClient();
 
 			}
@@ -153,9 +155,9 @@ namespace _Scripts.Controllers {
 						}
 					}
 				};
-				nodeType = NodeType.Server;
+				Instance.nodeType = NodeType.Server;
 				Debug.Log("Creating Lobby");
-				createdLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayersInclusiveOfSelf, lobbyOptions);
+				_createdLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayersInclusiveOfSelf, lobbyOptions);
 			}
 			catch (LobbyServiceException e) {
 				Debug.Log(e);
@@ -164,7 +166,7 @@ namespace _Scripts.Controllers {
 
 		public static async Task<QueryResponse> QueryLobbies() {
 			try {
-				Debug.Log("Querying For Lobby");
+				// Debug.Log("Querying For Lobby");
 				QueryResponse queryResponse = await LobbyService.Instance.QueryLobbiesAsync();
 				return queryResponse;
 			}
@@ -238,10 +240,10 @@ namespace _Scripts.Controllers {
 		}
 
 		private async Task DeleteLobby() {
-			if (createdLobby != null) {
+			if (_createdLobby != null) {
 				try {
-					await LobbyService.Instance.DeleteLobbyAsync(createdLobby.Id);
-					createdLobby = null;
+					await LobbyService.Instance.DeleteLobbyAsync(_createdLobby.Id);
+					_createdLobby = null;
 				}
 				catch (LobbyServiceException e) {
 					Debug.Log(e);
@@ -250,18 +252,18 @@ namespace _Scripts.Controllers {
 		}
 
 		public void ConnectToServer() {
-			if (selectedLobby == null) {
+			if (_selectedLobby == null) {
 				Debug.Log("No Server Selected");
 				return;
 			}
-			JoinServer(selectedLobby);
+			JoinServer(_selectedLobby);
 		}
 
 		public async void DisconnectFromServer() {
 			try {
 				string playerId = AuthenticationService.Instance.PlayerId;
-				joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(joinedLobby.Id, new UpdateLobbyOptions());
-				await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, playerId);
+				_joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, new UpdateLobbyOptions());
+				await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, playerId);
 				GameUIController.Instance.HandlePlayerEndUI();
 			}
 			catch (LobbyServiceException e) {
@@ -277,13 +279,13 @@ namespace _Scripts.Controllers {
 		private async void OnApplicationQuit() {
 			await DeleteLobby();
 			if (nodeType != NodeType.None) {
-				NetworkManager.Singleton.Shutdown();
+				// NetworkManager.Singleton.Shutdown();
 			}
 		}
 		
 		private void OnLobbySelected(Lobby lobby) {
 			Debug.Log($"Server Selected: {lobby.Name} [{lobby.Id}]");
-			selectedLobby = lobby;
+			_selectedLobby = lobby;
 		}
 
 		private void OnNetworkInstanceShutdown() {
@@ -291,11 +293,11 @@ namespace _Scripts.Controllers {
 		}
 
 		private void OnServerDisconnect(bool value) {
-			Debug.Log($"Server Disconnected : ({value})");
+			Debug.Log($"Server Disconnected : ({value}) :(");
 		}
 
 		private void OnClientDisconnect(bool value) {
-			Debug.Log($"Client Disconnected : ({value})");
+			Debug.Log($"Client Disconnected : ({value}) :(");
 		}
 
 		#endregion
