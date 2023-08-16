@@ -11,6 +11,9 @@ namespace _Scripts.Track {
 
         [SerializeField] private NetworkVariable<bool> generateTrack = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
+        private bool changeValue;
+        private bool callRPC;
+
         [SerializeField] private List<Track> tracks;
 
         private List<Track> currentTrack = new List<Track>();
@@ -24,9 +27,17 @@ namespace _Scripts.Track {
 
         private void Update() {
             // if (!IsOwner) return;
-            if (generateTrack.Value) {
-                generateTrack.Value = false;
+            // if (generateTrack.Value) {
+            //     generateTrack.Value = false;
+            //     GenerateTrackServerRpc(10);
+            // }
+            if (callRPC) {
+                callRPC = false;
                 GenerateTrackServerRpc(10);
+            }
+
+            if (changeValue) {
+                generateTrack.Value = !generateTrack.Value;
             }
         }
 
@@ -35,8 +46,8 @@ namespace _Scripts.Track {
 
         #region Custom Methods
 
-        [ServerRpc(RequireOwnership = false)]
-        // [ServerRpc]
+        // [ServerRpc(RequireOwnership = false)]
+        [ServerRpc]
         public void GenerateTrackServerRpc(int trackLengthParam) {
             Debug.Log("ServerRpc Called" + OwnerClientId);
             DeletePreviousTrack();
@@ -65,6 +76,10 @@ namespace _Scripts.Track {
             currentTrack.Clear();
         }
 
+        private void PrintRepeating() {
+            Debug.Log(transform.position.ToString());
+        }
+
         #endregion
 
 
@@ -72,9 +87,17 @@ namespace _Scripts.Track {
 
         public override void OnNetworkSpawn() {
             Debug.Log(IsOwnedByServer + " <- Server Ownership");
+            // Debug.Log(owne);
+            InvokeRepeating(nameof(PrintRepeating), 1.5f, 1.5f);
             generateTrack.OnValueChanged += (value, newValue) => {
                 Debug.Log(OwnerClientId + " ; " + generateTrack.Value + " -:- " + value + " , " + newValue);
             };
+        }
+
+        public override void OnNetworkDespawn() {
+            base.OnNetworkDespawn();
+            Debug.Log($"Going down: {gameObject}");
+            Destroy(gameObject);
         }
 
         #endregion
