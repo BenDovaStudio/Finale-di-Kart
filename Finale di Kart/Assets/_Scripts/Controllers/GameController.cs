@@ -32,7 +32,7 @@ namespace _Scripts.Controllers {
 		}
 
 		private void OnCarSpawn(RCC_CarControllerV3 rccController, bool isOwner) {
-			if (!isOwner) return;
+			// if (!isOwner) return;
 			rccCamera.cameraTarget.playerVehicle = rccController;
 			rccComponent = rccController;
 			playerVehicle = rccController.transform;
