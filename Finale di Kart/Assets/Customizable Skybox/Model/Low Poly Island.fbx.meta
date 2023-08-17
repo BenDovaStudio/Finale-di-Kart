@@ -1,95 +1,269 @@
 fileFormatVersion: 2
 guid: 9e1cb89bae143d046bb9dba32b57bed0
 ModelImporter:
-  serializedVersion: 23
-  fileIDToRecycleName:
-    100000: Camera
-    100002: Cube
-    100004: Cube.001
-    100006: Cube.002
-    100008: Cube.003
-    100010: Cube.004
-    100012: Cube.005
-    100014: Icosphere
-    100016: Icosphere.001
-    100018: Icosphere.002
-    100020: Light
-    100022: //RootNode
-    100024: Plane
-    100026: Plane.001
-    100028: Plane.002
-    100030: Plane.003
-    100032: Plane.004
-    100034: Plane.005
-    100036: Plane.006
-    400000: Camera
-    400002: Cube
-    400004: Cube.001
-    400006: Cube.002
-    400008: Cube.003
-    400010: Cube.004
-    400012: Cube.005
-    400014: Icosphere
-    400016: Icosphere.001
-    400018: Icosphere.002
-    400020: Light
-    400022: //RootNode
-    400024: Plane
-    400026: Plane.001
-    400028: Plane.002
-    400030: Plane.003
-    400032: Plane.004
-    400034: Plane.005
-    400036: Plane.006
-    2300000: Cube
-    2300002: Cube.001
-    2300004: Cube.002
-    2300006: Cube.003
-    2300008: Cube.004
-    2300010: Cube.005
-    2300012: Icosphere
-    2300014: Icosphere.001
-    2300016: Icosphere.002
-    2300018: Plane
-    2300020: Plane.001
-    2300022: Plane.002
-    2300024: Plane.003
-    2300026: Plane.004
-    2300028: Plane.005
-    2300030: Plane.006
-    3300000: Cube
-    3300002: Cube.001
-    3300004: Cube.002
-    3300006: Cube.003
-    3300008: Cube.004
-    3300010: Cube.005
-    3300012: Icosphere
-    3300014: Icosphere.001
-    3300016: Icosphere.002
-    3300018: Plane
-    3300020: Plane.001
-    3300022: Plane.002
-    3300024: Plane.003
-    3300026: Plane.004
-    3300028: Plane.005
-    3300030: Plane.006
-    4300000: Icosphere
-    4300002: Plane
-    4300004: Cube
-    4300006: Plane.001
-    4300008: Plane.002
-    4300010: Plane.003
-    4300012: Cube.001
-    4300014: Plane.004
-    4300016: Plane.005
-    4300018: Cube.002
-    4300020: Cube.003
-    4300022: Cube.004
-    4300024: Plane.006
-    4300026: Cube.005
-    4300028: Icosphere.001
-    4300030: Icosphere.002
-    9500000: //RootNode
+  serializedVersion: 21300
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Camera
+  - first:
+      1: 100002
+    second: Cube
+  - first:
+      1: 100004
+    second: Cube.001
+  - first:
+      1: 100006
+    second: Cube.002
+  - first:
+      1: 100008
+    second: Cube.003
+  - first:
+      1: 100010
+    second: Cube.004
+  - first:
+      1: 100012
+    second: Cube.005
+  - first:
+      1: 100014
+    second: Icosphere
+  - first:
+      1: 100016
+    second: Icosphere.001
+  - first:
+      1: 100018
+    second: Icosphere.002
+  - first:
+      1: 100020
+    second: Light
+  - first:
+      1: 100022
+    second: //RootNode
+  - first:
+      1: 100024
+    second: Plane
+  - first:
+      1: 100026
+    second: Plane.001
+  - first:
+      1: 100028
+    second: Plane.002
+  - first:
+      1: 100030
+    second: Plane.003
+  - first:
+      1: 100032
+    second: Plane.004
+  - first:
+      1: 100034
+    second: Plane.005
+  - first:
+      1: 100036
+    second: Plane.006
+  - first:
+      4: 400000
+    second: Camera
+  - first:
+      4: 400002
+    second: Cube
+  - first:
+      4: 400004
+    second: Cube.001
+  - first:
+      4: 400006
+    second: Cube.002
+  - first:
+      4: 400008
+    second: Cube.003
+  - first:
+      4: 400010
+    second: Cube.004
+  - first:
+      4: 400012
+    second: Cube.005
+  - first:
+      4: 400014
+    second: Icosphere
+  - first:
+      4: 400016
+    second: Icosphere.001
+  - first:
+      4: 400018
+    second: Icosphere.002
+  - first:
+      4: 400020
+    second: Light
+  - first:
+      4: 400022
+    second: //RootNode
+  - first:
+      4: 400024
+    second: Plane
+  - first:
+      4: 400026
+    second: Plane.001
+  - first:
+      4: 400028
+    second: Plane.002
+  - first:
+      4: 400030
+    second: Plane.003
+  - first:
+      4: 400032
+    second: Plane.004
+  - first:
+      4: 400034
+    second: Plane.005
+  - first:
+      4: 400036
+    second: Plane.006
+  - first:
+      23: 2300000
+    second: Cube
+  - first:
+      23: 2300002
+    second: Cube.001
+  - first:
+      23: 2300004
+    second: Cube.002
+  - first:
+      23: 2300006
+    second: Cube.003
+  - first:
+      23: 2300008
+    second: Cube.004
+  - first:
+      23: 2300010
+    second: Cube.005
+  - first:
+      23: 2300012
+    second: Icosphere
+  - first:
+      23: 2300014
+    second: Icosphere.001
+  - first:
+      23: 2300016
+    second: Icosphere.002
+  - first:
+      23: 2300018
+    second: Plane
+  - first:
+      23: 2300020
+    second: Plane.001
+  - first:
+      23: 2300022
+    second: Plane.002
+  - first:
+      23: 2300024
+    second: Plane.003
+  - first:
+      23: 2300026
+    second: Plane.004
+  - first:
+      23: 2300028
+    second: Plane.005
+  - first:
+      23: 2300030
+    second: Plane.006
+  - first:
+      33: 3300000
+    second: Cube
+  - first:
+      33: 3300002
+    second: Cube.001
+  - first:
+      33: 3300004
+    second: Cube.002
+  - first:
+      33: 3300006
+    second: Cube.003
+  - first:
+      33: 3300008
+    second: Cube.004
+  - first:
+      33: 3300010
+    second: Cube.005
+  - first:
+      33: 3300012
+    second: Icosphere
+  - first:
+      33: 3300014
+    second: Icosphere.001
+  - first:
+      33: 3300016
+    second: Icosphere.002
+  - first:
+      33: 3300018
+    second: Plane
+  - first:
+      33: 3300020
+    second: Plane.001
+  - first:
+      33: 3300022
+    second: Plane.002
+  - first:
+      33: 3300024
+    second: Plane.003
+  - first:
+      33: 3300026
+    second: Plane.004
+  - first:
+      33: 3300028
+    second: Plane.005
+  - first:
+      33: 3300030
+    second: Plane.006
+  - first:
+      43: 4300000
+    second: Icosphere
+  - first:
+      43: 4300002
+    second: Plane
+  - first:
+      43: 4300004
+    second: Cube
+  - first:
+      43: 4300006
+    second: Plane.001
+  - first:
+      43: 4300008
+    second: Plane.002
+  - first:
+      43: 4300010
+    second: Plane.003
+  - first:
+      43: 4300012
+    second: Cube.001
+  - first:
+      43: 4300014
+    second: Plane.004
+  - first:
+      43: 4300016
+    second: Plane.005
+  - first:
+      43: 4300018
+    second: Cube.002
+  - first:
+      43: 4300020
+    second: Cube.003
+  - first:
+      43: 4300022
+    second: Cube.004
+  - first:
+      43: 4300024
+    second: Plane.006
+  - first:
+      43: 4300026
+    second: Cube.005
+  - first:
+      43: 4300028
+    second: Icosphere.001
+  - first:
+      43: 4300030
+    second: Icosphere.002
+  - first:
+      95: 9500000
+    second: //RootNode
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -137,15 +311,16 @@ ModelImporter:
       name: trunk
     second: {fileID: 2100000, guid: 2b1bb1efbeb980540aa4164a74c61686, type: 2}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
-    materialLocation: 0
+    materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
     motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
@@ -170,25 +345,34 @@ ModelImporter:
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 0
     importLights: 0
+    nodeNameCollisionStrategy: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 0.01
-    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -197,10 +381,10 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -210,13 +394,18 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
   additionalBone: 0
   userData: 
   assetBundleName: 
