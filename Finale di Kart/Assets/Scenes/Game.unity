@@ -14,10 +14,10 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_Fog: 1
+  m_FogColor: {r: 0.24705882, g: 0.6156863, b: 0.7372549, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.01
+  m_FogDensity: 0.005
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 5c57bb9da366e944a8f4ae9be4f413ec, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18387093, g: 0.2290181, b: 0.3031148, a: 1}
+  m_IndirectSpecularColor: {r: 0.16077669, g: 0.45976877, b: 0.6150477, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3857,7 +3857,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1057346357
 Transform:
   m_ObjectHideFlags: 0
@@ -3882,21 +3882,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 7031893938138298960, guid: 26abbe08ad0cfa8499719dbc4801bede,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 7031893938612959211, guid: 26abbe08ad0cfa8499719dbc4801bede,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 7031893939115621348, guid: 26abbe08ad0cfa8499719dbc4801bede,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7031893939122701704, guid: 26abbe08ad0cfa8499719dbc4801bede,
         type: 3}
       propertyPath: m_RootOrder
@@ -3957,45 +3942,10 @@ PrefabInstance:
       propertyPath: bounds.m_Center.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7031893939122701705, guid: 26abbe08ad0cfa8499719dbc4801bede,
-        type: 3}
-      propertyPath: bounds.m_Center.y
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 7031893939122701705, guid: 26abbe08ad0cfa8499719dbc4801bede,
-        type: 3}
-      propertyPath: bounds.m_Center.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7031893939122701705, guid: 26abbe08ad0cfa8499719dbc4801bede,
-        type: 3}
-      propertyPath: bounds.m_Extent.x
-      value: 1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 7031893939122701705, guid: 26abbe08ad0cfa8499719dbc4801bede,
-        type: 3}
-      propertyPath: bounds.m_Extent.y
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 7031893939122701705, guid: 26abbe08ad0cfa8499719dbc4801bede,
-        type: 3}
-      propertyPath: bounds.m_Extent.z
-      value: 1000
-      objectReference: {fileID: 0}
     - target: {fileID: 7031893939122701751, guid: 26abbe08ad0cfa8499719dbc4801bede,
         type: 3}
       propertyPath: m_Name
       value: Map
-      objectReference: {fileID: 0}
-    - target: {fileID: 7031893939122701751, guid: 26abbe08ad0cfa8499719dbc4801bede,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7031893939208466269, guid: 26abbe08ad0cfa8499719dbc4801bede,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26abbe08ad0cfa8499719dbc4801bede, type: 3}

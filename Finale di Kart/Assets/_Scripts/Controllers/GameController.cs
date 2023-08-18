@@ -16,6 +16,7 @@ namespace _Scripts.Controllers {
 
 		[SerializeField]
 		private RCC_Camera rccCamera;
+		// 558d9f 3F9DBC
 
 
 		private void Awake() {
