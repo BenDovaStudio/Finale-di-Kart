@@ -2,11 +2,14 @@ using UnityEngine;
 
 namespace _Scripts.Controllers {
 	public class GameController : MonoBehaviour {
-
-
 		public static GameController Instance;
-		
-		
+
+		public static bool IsOwner {
+			get;
+			private set;
+		}
+
+
 		[SerializeField]
 		private Transform playerVehicle;
 
@@ -16,6 +19,7 @@ namespace _Scripts.Controllers {
 
 		[SerializeField]
 		private RCC_Camera rccCamera;
+
 		// 558d9f 3F9DBC
 
 
@@ -33,7 +37,8 @@ namespace _Scripts.Controllers {
 		}
 
 		private void OnCarSpawn(RCC_CarControllerV3 rccController, bool isOwner) {
-			// if (!isOwner) return;
+			IsOwner = isOwner;
+			if (!isOwner) return;
 			rccCamera.cameraTarget.playerVehicle = rccController;
 			rccComponent = rccController;
 			playerVehicle = rccController.transform;

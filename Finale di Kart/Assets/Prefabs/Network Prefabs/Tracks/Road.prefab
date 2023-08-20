@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7971560957243170756}
   - component: {fileID: 6887952195401885209}
   - component: {fileID: 3554140595979592407}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Direction
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,9 +97,10 @@ GameObject:
   - component: {fileID: -6467084198617120898}
   - component: {fileID: 734548214712350943}
   - component: {fileID: 3204969035760928421}
-  m_Layer: 0
+  - component: {fileID: 829797819990381936}
+  m_Layer: 19
   m_Name: Road
-  m_TagString: Untagged
+  m_TagString: Track
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -236,3 +237,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &829797819990381936
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8392712965987794348}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -8634060567236447461, guid: 39176d505166cd34a905c723fec01cd1, type: 3}

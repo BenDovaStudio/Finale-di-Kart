@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5213639262539564305}
   - component: {fileID: 4522384595536523064}
   - component: {fileID: 1464532409429855050}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Direction
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,9 +97,10 @@ GameObject:
   - component: {fileID: 6601580873847177026}
   - component: {fileID: 5127810722292220907}
   - component: {fileID: -6077805334377977464}
-  m_Layer: 0
+  - component: {fileID: 7846675426274474624}
+  m_Layer: 19
   m_Name: TurnR45
-  m_TagString: Untagged
+  m_TagString: Track
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -236,3 +237,17 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 0
   SlerpPosition: 0
+--- !u!64 &7846675426274474624
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4728769956056359489}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -2524584139506613039, guid: 39176d505166cd34a905c723fec01cd1, type: 3}

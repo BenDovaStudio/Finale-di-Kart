@@ -1118,7 +1118,7 @@ public class RCC_CarControllerV3 : RCC_Core {
     }
 
     private void Inputs() {
-        // if (!IsOwner) return;
+        if (!IsOwner) return;
 
         if (canControl) {
 

@@ -24,6 +24,10 @@ namespace _Scripts.Controllers {
 
 		[SerializeField] private ServerListElement serverListElementPrefab;
 
+		// [Space] 
+		[SerializeField] private Transform createServerButtonTransform;
+		// [Space]
+
 
 		private static List<ServerListElement> _serverList = new List<ServerListElement>();
 
@@ -77,6 +81,7 @@ namespace _Scripts.Controllers {
 
 		public void SetDefaultUI() {
 			if (serverListTransform) serverListTransform.gameObject.SetActive(true);
+			// if (createServerButtonTransform) createServerButtonTransform.gameObject.SetActive(IsServer);
 			if (serverButtonGrpTransform) serverButtonGrpTransform.gameObject.SetActive(false);
 			if (playerButtonGrpTransform) playerButtonGrpTransform.gameObject.SetActive(false);
 		}

@@ -233,8 +233,7 @@ namespace _Scripts.Controllers {
 			enteredCode.Clear();
 		}
 
-		public async void KillServer() {
-			await DeleteLobby();
+		public void KillServer() {
 			NetworkManager.Singleton.Shutdown();
 			GameUIController.Instance.HandleServerStopUI();
 		}
@@ -292,8 +291,9 @@ namespace _Scripts.Controllers {
 			GameUIController.Instance.SetDefaultUI();
 		}
 
-		private void OnServerDisconnect(bool value) {
-			Debug.Log($"Server Disconnected : ({value}) :(");
+		private async void OnServerDisconnect(bool value) {
+			await DeleteLobby();
+			// Debug.Log($"Server Disconnected : ({value}) :(");
 		}
 
 		private void OnClientDisconnect(bool value) {

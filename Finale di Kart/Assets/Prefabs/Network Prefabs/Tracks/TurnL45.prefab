@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 2518957040377892090}
   - component: {fileID: 2986064624174237274}
   - component: {fileID: 1087252964045081157}
-  m_Layer: 0
+  - component: {fileID: 6237709670884243385}
+  m_Layer: 19
   m_Name: TurnL45
-  m_TagString: Untagged
+  m_TagString: Track
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -153,6 +154,20 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 0
   SlerpPosition: 0
+--- !u!64 &6237709670884243385
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1131246847608478538}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 5796123924804413007, guid: 39176d505166cd34a905c723fec01cd1, type: 3}
 --- !u!1 &6116088898617625128
 GameObject:
   m_ObjectHideFlags: 0
@@ -164,7 +179,7 @@ GameObject:
   - component: {fileID: 7008064194242472054}
   - component: {fileID: 4108135766482090209}
   - component: {fileID: 2791406557470144656}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Direction-
   m_TagString: Untagged
   m_Icon: {fileID: 0}
