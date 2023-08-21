@@ -709,9 +709,6 @@ GameObject:
   - component: {fileID: 1437360010043522146}
   - component: {fileID: 1437360010043522144}
   - component: {fileID: 5833118231949730333}
-  - component: {fileID: 2336508229732338616}
-  - component: {fileID: 2516589758323511163}
-  - component: {fileID: 6506338889708380010}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -1087,49 +1084,6 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!114 &2336508229732338616
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1437360010043522148}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16baf47309f880246a54b7a446aeb034, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2516589758323511163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1437360010043522148}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18d4406c37d585e44af5b4da69497798, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &6506338889708380010
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1437360010043522148}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30f503aa436ea0f43b67a3d0ebb9a73e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  generateTrack:
-    m_InternalValue: 0
-  tracks:
-  - {fileID: 3807359311688267471, guid: c6b7739a218e7d045900d066e74eea6b, type: 3}
-  - {fileID: 2518957040377892090, guid: 2f62a4d3da4739c4f8fc159ef3ec1302, type: 3}
-  - {fileID: 6601580873847177026, guid: 3e7ad653b568d124e84e1295895c64b7, type: 3}
-  trackLength: 0
 --- !u!1 &1437360010167175147
 GameObject:
   m_ObjectHideFlags: 0

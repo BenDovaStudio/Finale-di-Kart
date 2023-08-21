@@ -24,6 +24,8 @@ namespace _Scripts.Track {
 
         [SerializeField] private Button generateTrackButton;
 
+        [SerializeField] private LayerMask trackMask;
+
         #endregion
 
 
@@ -66,18 +68,59 @@ namespace _Scripts.Track {
                 int trackBlock = Random.Range(0, tracks.Count);
                 var spawnAtTransform = currentTrack[^1].GetEndNode();       // getting last spawned track from the list
 
-                var possibleEndPoint = tracks[trackBlock].GetEndNode();
+                bool shouldSpawn = true;
 
-                Ray ray = new Ray(possibleEndPoint.position, possibleEndPoint.forward);
+                
+                // Vector3 leftPoint =new Vector3(possibleEndPoint.pos, )
+                
+                // Ray rayleft = new Ray(possibleEndPoint.position)
                 
                 // Debug.Log($"");
                 // Debug.DrawRay(possibleEndPoint.position, possibleEndPoint.forward);
                 
                 // .03f
                 var spawnedTrack = Instantiate(tracks[trackBlock], spawnAtTransform);
-                spawnedTrack.GetComponent<NetworkObject>().Spawn(true);
+                
+                spawnedTrack.gameObject.SetActive(false);
 
-                currentTrack.Add(spawnedTrack);
+
+                var tempHolder = tracks[trackBlock].GetEndNode().position;
+
+                var spawnPosition = new Vector3(tempHolder.x, tempHolder.y + 0.03f, tempHolder.z);
+                var possibleEndPoint = tracks[trackBlock].GetEndNode();
+                
+
+                Ray ray = new Ray(spawnPosition, possibleEndPoint.forward);
+                RaycastHit hit0, hit1, hit2;
+                if (Physics.Raycast(ray, out hit0, 1500f, trackMask)) {
+                    shouldSpawn = false;
+                }
+
+                spawnPosition = new Vector3(tempHolder.x - 4, tempHolder.y + 0.03f, tempHolder.z);
+                ray = new Ray(spawnPosition, possibleEndPoint.forward);
+                
+                if (Physics.Raycast(ray, out hit1, 1500f, trackMask)) {
+                    shouldSpawn = false;
+                }
+                spawnPosition = new Vector3(tempHolder.x + 4, tempHolder.y + 0.03f, tempHolder.z);
+                ray = new Ray(spawnPosition, possibleEndPoint.forward);
+                
+                if (Physics.Raycast(ray, out hit2, 1500f, trackMask)) {
+                    shouldSpawn = false;
+                }
+
+
+
+
+                if (shouldSpawn) {
+                    spawnedTrack.gameObject.SetActive(true);
+                    spawnedTrack.GetComponent<NetworkObject>().Spawn(true);
+                    currentTrack.Add(spawnedTrack);    
+                }
+                else {
+                    Destroy(spawnedTrack.gameObject);
+                }
+                
             }
         }
 
