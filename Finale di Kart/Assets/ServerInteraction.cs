@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using _Scripts.Track;
 using UnityEngine;
 
 public class ServerInteraction : MonoBehaviour
