@@ -76,23 +76,23 @@ public class RCC_InputManager {
             inputActions.Enable();
 
             inputActions.Vehicle.StartStopEngine.performed += StartStopEngine_performed;
-            inputActions.Vehicle.LowBeamLights.performed += LowBeamLights_performed;
-            inputActions.Vehicle.HighBeamLights.performed += HighBeamLights_performed;
+            // inputActions.Vehicle.LowBeamLights.performed += LowBeamLights_performed;
+            // inputActions.Vehicle.HighBeamLights.performed += HighBeamLights_performed;
             inputActions.Camera.ChangeCamera.performed += ChangeCamera_performed;
-            inputActions.Vehicle.IndicatorLeft.performed += IndicatorLeft_performed;
-            inputActions.Vehicle.IndicatorRight.performed += IndicatorRight_performed;
-            inputActions.Vehicle.IndicatorHazard.performed += IndicatorHazard_performed;
-            inputActions.Vehicle.GearShiftUp.performed += GearShiftUp_performed;
-            inputActions.Vehicle.GearShiftDown.performed += GearShiftDown_performed;
-            inputActions.Vehicle.NGear.performed += NGear_performed;
-            inputActions.Vehicle.NGear.canceled += NGear_canceled;
+            // inputActions.Vehicle.IndicatorLeft.performed += IndicatorLeft_performed;
+            // inputActions.Vehicle.IndicatorRight.performed += IndicatorRight_performed;
+            // inputActions.Vehicle.IndicatorHazard.performed += IndicatorHazard_performed;
+            // inputActions.Vehicle.GearShiftUp.performed += GearShiftUp_performed;
+            // inputActions.Vehicle.GearShiftDown.performed += GearShiftDown_performed;
+            // inputActions.Vehicle.NGear.performed += NGear_performed;
+            // inputActions.Vehicle.NGear.canceled += NGear_canceled;
             inputActions.Optional.SlowMotion.performed += SlowMotion_performed;
             inputActions.Optional.SlowMotion.canceled += SlowMotion_canceled;
             inputActions.Optional.Record.performed += Record_performed;
             inputActions.Optional.Replay.performed += Replay_performed;
             inputActions.Camera.LookBack.performed += LookBack_performed;
             inputActions.Camera.LookBack.canceled += LookBack_canceled;
-            inputActions.Vehicle.TrailerDetach.performed += TrailerDetach_performed;
+            // inputActions.Vehicle.TrailerDetach.performed += TrailerDetach_performed;
 
 #if RCC_LOGITECH
             //	LOGITECH STEERING WHEEL INPUTS
@@ -122,7 +122,7 @@ public class RCC_InputManager {
             inputs.steerInput = inputActions.Vehicle.Steering.ReadValue<float>();
             inputs.handbrakeInput = inputActions.Vehicle.Handbrake.ReadValue<float>();
             inputs.boostInput = inputActions.Vehicle.NOS.ReadValue<float>();
-            inputs.clutchInput = inputActions.Vehicle.Clutch.ReadValue<float>();
+            // inputs.clutchInput = inputActions.Vehicle.Clutch.ReadValue<float>();
             inputs.gearInput = logitechGear;
             inputs.orbitX = inputActions.Camera.Orbit.ReadValue<Vector2>().x;
             inputs.orbitY = inputActions.Camera.Orbit.ReadValue<Vector2>().y;

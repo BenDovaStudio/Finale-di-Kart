@@ -310,7 +310,7 @@ MonoBehaviour:
   maxBrakeSoundVolume: 0.5
   foldGeneralSettings: 1
   foldBehaviorSettings: 1
-  foldControllerSettings: 0
+  foldControllerSettings: 1
   foldUISettings: 0
   foldWheelPhysics: 0
   foldSFX: 0

@@ -45,12 +45,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30f503aa436ea0f43b67a3d0ebb9a73e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  generateTrack: 0
   tracks:
   - {fileID: 3807359311688267471, guid: c6b7739a218e7d045900d066e74eea6b, type: 3}
   - {fileID: 2518957040377892090, guid: 2f62a4d3da4739c4f8fc159ef3ec1302, type: 3}
   - {fileID: 6601580873847177026, guid: 3e7ad653b568d124e84e1295895c64b7, type: 3}
   trackLength: 0
+  generateTrackButton: {fileID: 0}
+  trackMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &2355976122250799545
 MonoBehaviour:
   m_ObjectHideFlags: 0

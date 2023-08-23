@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -15,9 +17,12 @@ namespace _Scripts.Track {
         // private bool changeValue;
         // private bool callRPC;
 
-        [SerializeField] private List<Track> tracks;
+        [FormerlySerializedAs("tracks")] [SerializeField] private List<Track> trackPrefabs;
 
-        private List<Track> currentTrack = new List<Track>();
+        // private List<Track> currentTrack = new List<Track>();
+
+        [SerializeField] private List<List<Track>> tracks = new List<List<Track>>();
+        
 
         [SerializeField] private int trackLength;
 
@@ -25,10 +30,28 @@ namespace _Scripts.Track {
 
         [SerializeField] private LayerMask trackMask;
 
+        [SerializeField] private Transform[] trackLocations;
+
+        [SerializeField] private bool[] trackBusy = new bool[5];
+
+
+        private List<Track> currentTrack;
+
         #endregion
 
 
         #region Builtin Methods
+
+        private void Start() {
+            tracks.Add(new List<Track>());
+            tracks.Add(new List<Track>());
+            tracks.Add(new List<Track>());
+            tracks.Add(new List<Track>());
+            tracks.Add(new List<Track>());
+            // Debug.Log($"Count: {tracks.Count}");
+            
+            // Spawn Offset x1.5, y0.15, z2.5
+        }
 
         private void Update() {
             // if (!IsOwner) return;
@@ -52,19 +75,26 @@ namespace _Scripts.Track {
 
         // [ServerRpc(RequireOwnership = false)]
         // [ServerRpc]
-        private void GenerateTrack() {
+        public void GenerateTrack() {
             if (!IsServer) return;
-            Debug.Log($"GenerateTrack Called {IsServer} : {IsOwner} : {OwnerClientId} : {IsOwnedByServer}");
+            Debug.Log("Generating");
+            var indexTrack = GetFreeTrack();
+            // var indexTrack = 0;
+            currentTrack = tracks[indexTrack];
+            Transform spawnTransform = trackLocations[indexTrack];
+            trackBusy[indexTrack] = true;
+            // Debug.Log($"GenerateTrack Called {IsServer} : {IsOwner} : {OwnerClientId} : {IsOwnedByServer}");
             DeletePreviousTrack();
-            var selfTransform = transform;
-            var firstNode = Instantiate(tracks[0], selfTransform.position, Quaternion.identity, selfTransform);
+            // var selfTransform = transform;
+            var firstNode = Instantiate(trackPrefabs[0], spawnTransform.position, Quaternion.identity);
             firstNode.GetComponent<NetworkObject>().Spawn(true);
+            firstNode.transform.SetParent(spawnTransform);
             currentTrack.Add(firstNode);
 
 
             for (int itr = 0; itr < trackLength; ++itr) {
 
-                int trackBlock = Random.Range(0, tracks.Count);
+                int trackBlock = Random.Range(0, trackPrefabs.Count);
                 var spawnAtTransform = currentTrack[^1].GetEndNode();       // getting last spawned track from the list
 
                 bool shouldSpawn = true;
@@ -78,15 +108,15 @@ namespace _Scripts.Track {
                 // Debug.DrawRay(possibleEndPoint.position, possibleEndPoint.forward);
                 
                 // .03f
-                var spawnedTrack = Instantiate(tracks[trackBlock], spawnAtTransform);
+                var spawnedTrack = Instantiate(trackPrefabs[trackBlock], spawnAtTransform);
                 
                 spawnedTrack.gameObject.SetActive(false);
 
 
-                var tempHolder = tracks[trackBlock].GetEndNode().position;
+                var tempHolder = trackPrefabs[trackBlock].GetEndNode().position;
 
                 var spawnPosition = new Vector3(tempHolder.x, tempHolder.y + 0.03f, tempHolder.z);
-                var possibleEndPoint = tracks[trackBlock].GetEndNode();
+                var possibleEndPoint = trackPrefabs[trackBlock].GetEndNode();
                 
 
                 Ray ray = new Ray(spawnPosition, possibleEndPoint.forward);
@@ -114,22 +144,39 @@ namespace _Scripts.Track {
                 if (shouldSpawn) {
                     spawnedTrack.gameObject.SetActive(true);
                     spawnedTrack.GetComponent<NetworkObject>().Spawn(true);
+                    spawnedTrack.transform.SetParent(spawnTransform);
                     currentTrack.Add(spawnedTrack);    
                 }
                 else {
                     Destroy(spawnedTrack.gameObject);
+                    itr--;
                 }
                 
             }
+
+            // return indexTrack;
         }
-
-
+        
+        
+        
         private void DeletePreviousTrack() {
             foreach (var track in currentTrack) {
                 Destroy(track.gameObject);
             }
 
             currentTrack.Clear();
+        }
+
+
+        private int GetFreeTrack() {
+            for (int itr = 0; itr < trackBusy.Length; ++itr) {
+                if (!trackBusy[itr]) {
+                    Debug.Log($"Track Found at: {itr}");
+                    return itr;
+                }
+            }
+            Debug.Log($"Track Found at: {-1}");
+            return -1;
         }
 
         /*private void PrintRepeating() {
@@ -151,10 +198,8 @@ namespace _Scripts.Track {
 
             generateTrackButton.onClick.AddListener(GenerateTrack);
             
-            Debug.Log($"Is owner: {IsOwner}, Is Server: {IsServer}");
+            // Debug.Log($"Is owner: {IsOwner}, Is Server: {IsServer}");
             if(generateTrackButton) generateTrackButton.gameObject.SetActive(IsServer);
-            
-            
         }
 
         public override void OnNetworkDespawn() {
