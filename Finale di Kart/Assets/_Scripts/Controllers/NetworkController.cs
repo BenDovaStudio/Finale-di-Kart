@@ -70,7 +70,7 @@ namespace _Scripts.Controllers {
 		private void Update() {
 			// LobbyHeartbeat();
 			HandleLobbyHeartbeat();
-			HandleSecretCode();
+			if(nodeType == NodeType.None) HandleSecretCode();
 		}
 
 		#endregion
@@ -99,7 +99,7 @@ namespace _Scripts.Controllers {
 
 		private async void HandleLobbyHeartbeat() {
 			if (_createdLobby == null) return;
-			heartbeatTimer -= Time.deltaTime;
+			heartbeatTimer -= Time.unscaledDeltaTime;
 			if (heartbeatTimer < 0) {
 				heartbeatTimer = heartbeatCooldown;
 				Debug.Log("Sending Heartbeat");
@@ -190,6 +190,11 @@ namespace _Scripts.Controllers {
         
 		private void HandleSecretCode() {
 			foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode))) {
+				// Check if the input has timed out
+				if (Time.time - lastKeyPressTime > secretCodeCooldown && enteredCode.Count>0) {
+					enteredCode.Clear(); // Reset the input after timeout
+					Debug.Log("Clearing Code");
+				}
 				if (Input.GetKeyDown(keyCode)) {
 					lastKeyPressTime = Time.time; // Update the last key press time
 
@@ -204,11 +209,6 @@ namespace _Scripts.Controllers {
 					}
 				}
 			}
-
-			// Check if the input has timed out
-			if (Time.time - lastKeyPressTime > secretCodeCooldown) {
-				enteredCode.Clear(); // Reset the input after timeout
-			}
 		}
 
 		private void CheckSecretCode() {
@@ -218,6 +218,7 @@ namespace _Scripts.Controllers {
 				for (int i = 0; i < serverSecretCode.Length; i++) {
 					if (enteredCode[i] != serverSecretCode[i]) {
 						codeMatch = false;
+						Debug.Log($"Mismatch: Expected {serverSecretCode[i]} Was {enteredCode[i]}");
 						break;
 					}
 
@@ -235,6 +236,7 @@ namespace _Scripts.Controllers {
 
 		public void KillServer() {
 			NetworkManager.Singleton.Shutdown();
+			nodeType = NodeType.None;
 			GameUIController.Instance.HandleServerStopUI();
 		}
 
@@ -264,6 +266,7 @@ namespace _Scripts.Controllers {
 				// _joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, new UpdateLobbyOptions());
 				await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, playerId);
 				NetworkManager.Singleton.Shutdown();
+				nodeType = NodeType.None;
 				GameUIController.Instance.HandlePlayerEndUI();
 			}
 			catch (LobbyServiceException e) {

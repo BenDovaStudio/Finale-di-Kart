@@ -8,6 +8,6 @@ namespace _Scripts
         
         public const float HeartbeatCooldown = 20;
 
-        public const float SecretCodeCooldown = 1.5f;
+        public const float SecretCodeCooldown = 2f;
     }
 }

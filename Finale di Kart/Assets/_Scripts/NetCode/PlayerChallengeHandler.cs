@@ -15,6 +15,10 @@ namespace _Scripts.NetCode {
     
         private int currentInitiatedId = -1;
         private int currentTargetId = -1;
+
+
+
+        private readonly ulong[] targetClientArray = new ulong[1];
     
 
         /*[SerializeField] private List<int> beingWaitedUponClientIds = new List<int>();
@@ -38,12 +42,14 @@ namespace _Scripts.NetCode {
                 if (Input.GetKeyDown(KeyCode.Y)) {
                     // Debug.Log("Y Pressed");
                     ReplyChallengeServerRpc(ChallengeResponse.Accept, (ulong)lockedClientId);
+                    GameUIController.Instance.DisablePrompt();
                     isBeingWaitedUpon = false;
                 }
 
                 if (Input.GetKeyDown(KeyCode.N)) {
                     // Debug.Log("N Pressed");
                     ReplyChallengeServerRpc(ChallengeResponse.Reject, (ulong)lockedClientId);
+                    GameUIController.Instance.DisablePrompt();
                     isBeingWaitedUpon = false;
                 }
 
@@ -93,15 +99,18 @@ namespace _Scripts.NetCode {
 
             Debug.Log($"Initiated req from client: {senderClientId} to {targetClientId}");
 
+            targetClientArray[0] = senderClientId;
+            currentInitiatedId = (int)senderClientId;
             ClientRpcParams initiatorClientRpcParams = new ClientRpcParams {
                 Send = new ClientRpcSendParams {
-                    TargetClientIds = new ulong[] { senderClientId }
+                    TargetClientIds = targetClientArray
                 }
             };
-
+            targetClientArray[0] = targetClientId;
+            currentTargetId = (int)targetClientId;
             ClientRpcParams targetClientRpcParams = new ClientRpcParams {
                 Send = new ClientRpcSendParams {
-                    TargetClientIds = new ulong[] { targetClientId }
+                    TargetClientIds = targetClientArray
                 }
             };
 
@@ -179,6 +188,9 @@ namespace _Scripts.NetCode {
                     break;
                 }
             }
+
+            currentInitiatedId = -1;
+            currentTargetId = -1;
         }
 
 
