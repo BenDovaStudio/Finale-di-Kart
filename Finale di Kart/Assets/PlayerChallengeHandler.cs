@@ -42,13 +42,13 @@ public class PlayerChallengeHandler : NetworkBehaviour {
             // Debug.Log("Press Y or N");
             if (Input.GetKeyDown(KeyCode.Y)) {
                 // Debug.Log("Y Pressed");
-                ReplyChallengeServerRpc(ChallengeResponse.Accept);
+                ReplyChallengeServerRpc(ChallengeResponse.Accept, (ulong)lockedClientId);
                 isBeingWaitedUpon = false;
             }
 
             if (Input.GetKeyDown(KeyCode.N)) {
                 // Debug.Log("N Pressed");
-                ReplyChallengeServerRpc(ChallengeResponse.Reject);
+                ReplyChallengeServerRpc(ChallengeResponse.Reject, (ulong)lockedClientId);
                 isBeingWaitedUpon = false;
             }
 
@@ -90,9 +90,12 @@ public class PlayerChallengeHandler : NetworkBehaviour {
     // Will Get called upon challenge initiate request
     [ServerRpc]
     private void InitiateChallengeServerRpc(ulong targetClientId, ServerRpcParams serverRpcParams = default) {
+        Debug.Log($"{gameObject.name}:-> InitiateChallengeServerRpc >> IsServer: {IsServer}, IsOwnedByServer: {IsOwnedByServer}, IsOwner: {IsOwner}, OwnerClientId: {OwnerClientId}, IsLocalPlayer: {IsLocalPlayer}, IsClient: {IsClient}, IsSpawned: {IsSpawned}");
         if (!IsServer) return;
         float requestTimeout = 10f;
         var senderClientId = serverRpcParams.Receive.SenderClientId;
+
+        Debug.Log($"Initiated req from client: {senderClientId} to {targetClientId}");
 
         ClientRpcParams initiatorClientRpcParams = new ClientRpcParams {
             Send = new ClientRpcSendParams {
@@ -146,17 +149,31 @@ public class PlayerChallengeHandler : NetworkBehaviour {
         InitiatedChallengeRequestClientRpc(requestTimeout, initiatorClientRpcParams);
 
         // inform the target about the challenge request
-        ReceiveChallengeRequestClientRpc(requestTimeout, targetClientRpcParams);
+        ReceiveChallengeRequestClientRpc(senderClientId, requestTimeout, targetClientRpcParams);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void ReplyChallengeServerRpc(ChallengeResponse response, ServerRpcParams serverRpcParams = default) {
+    private void ReplyChallengeServerRpc(ChallengeResponse response, ulong challengerId, ServerRpcParams serverRpcParams = default) {
+        Debug.Log($"{gameObject.name}:-> ReplyChallengeServerRpc >> IsServer: {IsServer}, IsOwnedByServer: {IsOwnedByServer}, IsOwner: {IsOwner}, OwnerClientId: {OwnerClientId}, IsLocalPlayer: {IsLocalPlayer}, IsClient: {IsClient}, IsSpawned: {IsSpawned}");
         if (!IsServer) return;
+        ClientRpcParams initiatorClientRpcParams = new ClientRpcParams {
+            Send = new ClientRpcSendParams {
+                TargetClientIds = new ulong[] { challengerId }
+            }
+        };
+
+        ClientRpcParams targetClientRpcParams = new ClientRpcParams {
+            Send = new ClientRpcSendParams {
+                TargetClientIds = new ulong[] { serverRpcParams.Receive.SenderClientId }
+            }
+        };
         switch (response) {
             case ChallengeResponse.Accept: {
                 // challengePairs[requestPairIndex].challengeState = ChallengeState.Accepted;
                 Debug.Log($"Challenge Accepted by client: {serverRpcParams.Receive.SenderClientId}");
                 TrackGenerator.Instance.GenerateTrack();
+                TeleportThemMFersClientRpc(new Vector3(-1.5f, 2, 0), targetClientRpcParams);
+                TeleportThemMFersClientRpc(new Vector3(1.5f, 2, 0), initiatorClientRpcParams);
                 break;
             }
             case ChallengeResponse.Reject: {
@@ -176,25 +193,41 @@ public class PlayerChallengeHandler : NetworkBehaviour {
 
     [ClientRpc]
     private void InitiatedChallengeRequestClientRpc(float timeoutDuration, ClientRpcParams clientRpcParams = default) {
+        Debug.Log($"{gameObject.name}:-> InitiatedChallengeRequestClientRpc >> IsServer: {IsServer}, IsOwnedByServer: {IsOwnedByServer}, IsOwner: {IsOwner}, OwnerClientId: {OwnerClientId}, IsLocalPlayer: {IsLocalPlayer}, IsClient: {IsClient}, IsSpawned: {IsSpawned}");
+
         if (!IsOwner) return;
         isWaitingForResponse = true;
         GameUIController.Instance.PromptWaiting(timeoutDuration);
     }
 
     [ClientRpc]
-    private void ReceiveChallengeRequestClientRpc(float timeoutDuration, ClientRpcParams clientRpcParams = default) {
+    private void ReceiveChallengeRequestClientRpc(ulong challengerId, float timeoutDuration, ClientRpcParams clientRpcParams = default) {
+        Debug.Log($"{gameObject.name}:-> RecieveChallengeRequestClientRpc >> IsServer: {IsServer}, IsOwnedByServer: {IsOwnedByServer}, IsOwner: {IsOwner}, OwnerClientId: {OwnerClientId}, IsLocalPlayer: {IsLocalPlayer}, IsClient: {IsClient}, IsSpawned: {IsSpawned}");
         isBeingWaitedUpon = true;
         if (IsOwner) return;
+        lockedClientId = (int)challengerId;
         Debug.Log("Waiting for user response");
         GameUIController.Instance.PromptAffirmation(timeoutDuration);
     }
     
     [ClientRpc]
     private void ResetChallengeClientRpc(ClientRpcParams clientRpcParams = default) {
+        Debug.Log($"{gameObject.name}:-> ResetChallengeClientRpc >> IsServer: {IsServer}, IsOwnedByServer: {IsOwnedByServer}, IsOwner: {IsOwner}, OwnerClientId: {OwnerClientId}, IsLocalPlayer: {IsLocalPlayer}, IsClient: {IsClient}, IsSpawned: {IsSpawned}");
         GameUIController.Instance.PromptDeactivateWhole();
         isBeingWaitedUpon = false;
         isWaitingForResponse = false;
         lockedClientId = -1;
+        // clientRpcParams.Receive.
+    }
+
+    [ClientRpc]
+    private void TeleportThemMFersClientRpc(Vector3 pos, ClientRpcParams clientRpcParams = default) {
+        Debug.Log($"{gameObject.name}:-> TeleportThemMFersClientRpc >> IsServer: {IsServer}, IsOwnedByServer: {IsOwnedByServer}, IsOwner: {IsOwner}, OwnerClientId: {OwnerClientId}, IsLocalPlayer: {IsLocalPlayer}, IsClient: {IsClient}, IsSpawned: {IsSpawned}");
+
+        // transform.position = location.position;
+        // NetworkManager.Singleton.ConnectedClients[OwnerClientId].PlayerObject.transform.position = pos;
+        Debug.Log("Hello "+ OwnerClientId);
+        transform.position = pos;
     }
 
     #endregion
@@ -231,6 +264,16 @@ public class PlayerChallengeHandler : NetworkBehaviour {
     private bool IsBeingWeightedUpon(int clientId) {
         return beingWaitedUponClientIds.Contains(clientId);
     }*/
+
+
+    public override void OnNetworkSpawn() {
+        base.OnNetworkSpawn();
+        if (IsServer)
+            gameObject.name = "ServerObj";
+        if (IsClient) {
+            gameObject.name = $"Client_{OwnerClientId}";
+        }
+    }
 
     #endregion
 
