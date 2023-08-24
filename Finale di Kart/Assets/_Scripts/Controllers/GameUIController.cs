@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using _Scripts.UI;
+using Unity.Multiplayer.Tools.NetStatsMonitor;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,12 @@ namespace _Scripts.Controllers {
 		#region Variables
 
 		public static GameUIController Instance;
+
+		#region Profiling
+
+		[SerializeField] private RuntimeNetStatsMonitor networkStatsMonitor; 
+
+		#endregion
 
 
 		#region ServerList
@@ -89,6 +96,9 @@ namespace _Scripts.Controllers {
 
 		private void Update() {
 			UpdateServerList();
+			if (Input.GetKeyDown(KeyCode.F8)) {
+				networkStatsMonitor.Visible = !networkStatsMonitor.Visible;
+			}
 		}
 
 		#endregion

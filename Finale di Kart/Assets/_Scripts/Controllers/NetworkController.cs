@@ -59,8 +59,8 @@ namespace _Scripts.Controllers {
 
 		private void OnDisable() {
 			ServerListElement.OnLobbySelect -= OnLobbySelected;
-			NetworkManager.Singleton.OnServerStopped -= OnServerDisconnect;
-			NetworkManager.Singleton.OnClientStopped -= OnClientDisconnect;
+			// NetworkManager.Singleton.OnServerStopped -= OnServerDisconnect;
+			// NetworkManager.Singleton.OnClientStopped -= OnClientDisconnect;
 		}
 
 		private void Start() {
@@ -261,8 +261,9 @@ namespace _Scripts.Controllers {
 		public async void DisconnectFromServer() {
 			try {
 				string playerId = AuthenticationService.Instance.PlayerId;
-				_joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, new UpdateLobbyOptions());
+				// _joinedLobby = await LobbyService.Instance.UpdateLobbyAsync(_joinedLobby.Id, new UpdateLobbyOptions());
 				await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, playerId);
+				NetworkManager.Singleton.Shutdown();
 				GameUIController.Instance.HandlePlayerEndUI();
 			}
 			catch (LobbyServiceException e) {
