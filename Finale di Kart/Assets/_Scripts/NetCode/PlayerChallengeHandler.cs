@@ -4,22 +4,26 @@ using _Scripts.Controllers;
 using _Scripts.Track;
 using Unity.Netcode;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace _Scripts.NetCode {
     public class PlayerChallengeHandler : NetworkBehaviour {
 
+
+        [SerializeField] private LayerMask terrainMask;
+
         [SerializeField] private int lockedClientId = -1;
-    
+
         [SerializeField] private bool isWaitingForResponse = false;
         [SerializeField] private bool isBeingWaitedUpon = false;
-    
+
         private int currentInitiatedId = -1;
         private int currentTargetId = -1;
 
 
 
         private readonly ulong[] targetClientArray = new ulong[1];
-    
+
 
         /*[SerializeField] private List<int> beingWaitedUponClientIds = new List<int>();
 
@@ -29,31 +33,23 @@ namespace _Scripts.NetCode {
         #region Builtin Methods
 
         private void Update() {
-            if (lockedClientId > -1) {
-                if (!isWaitingForResponse) {
-                    if (Input.GetKeyDown(KeyCode.G)) {
-                        InitiateChallengeServerRpc((ulong)lockedClientId);
-                    }
-                }
-            }
-
             if (isBeingWaitedUpon) {
-                // Debug.Log("Press Y or N");
                 if (Input.GetKeyDown(KeyCode.Y)) {
-                    // Debug.Log("Y Pressed");
                     ReplyChallengeServerRpc(ChallengeResponse.Accept, (ulong)lockedClientId);
                     GameUIController.Instance.DisablePrompt();
                     isBeingWaitedUpon = false;
                 }
-
-                if (Input.GetKeyDown(KeyCode.N)) {
-                    // Debug.Log("N Pressed");
+                else if (Input.GetKeyDown(KeyCode.N)) {
                     ReplyChallengeServerRpc(ChallengeResponse.Reject, (ulong)lockedClientId);
                     GameUIController.Instance.DisablePrompt();
                     isBeingWaitedUpon = false;
                 }
+            }
 
-                // isBeingWaitedUpon = false;
+            if (lockedClientId < 0) return;
+            if (isWaitingForResponse) return;
+            if (Input.GetKeyDown(KeyCode.G)) {
+                InitiateChallengeServerRpc((ulong)lockedClientId);
             }
         }
 
@@ -65,7 +61,6 @@ namespace _Scripts.NetCode {
             if (otherDude != null) {
                 lockedClientId = (int)otherDude.OwnerClientId;
                 GameUIController.Instance.PromptInitiateRace();
-                // Call ServerRPC to initiate challenge request
             }
         }
 
@@ -100,14 +95,14 @@ namespace _Scripts.NetCode {
             Debug.Log($"Initiated req from client: {senderClientId} to {targetClientId}");
 
             targetClientArray[0] = senderClientId;
-            currentInitiatedId = (int)senderClientId;
+            // currentInitiatedId = (int)senderClientId;
             ClientRpcParams initiatorClientRpcParams = new ClientRpcParams {
                 Send = new ClientRpcSendParams {
                     TargetClientIds = targetClientArray
                 }
             };
             targetClientArray[0] = targetClientId;
-            currentTargetId = (int)targetClientId;
+            // currentTargetId = (int)targetClientId;
             ClientRpcParams targetClientRpcParams = new ClientRpcParams {
                 Send = new ClientRpcSendParams {
                     TargetClientIds = targetClientArray
@@ -285,8 +280,26 @@ namespace _Scripts.NetCode {
                 gameObject.name = $"Self_Client_{OwnerClientId}";
             if (IsClient && !IsOwner)
                 gameObject.name = $"Other_Client_{OwnerClientId}";
-            if(IsClient && IsOwnedByServer)
+            if (IsClient && IsOwnedByServer)
                 gameObject.name = $"Other(ServerOwned)_Client_{OwnerClientId}";
+            if (IsServer && (!IsOwner || !IsOwnedByServer))
+                gameObject.name = $"Other_Client_{OwnerClientId}";
+
+            if (IsOwner) {
+                /*  Spawn Location Randomizer, currently it is spawning on top of the water... like... come on... :(
+                 var randomPosition = new Vector3(Random.Range(0, 100f), 0, Random.Range(0f, 100f));
+                // randomPosition.y = 1000;
+                var rayPos = randomPosition;
+                rayPos.y = 1500f;
+                var rotation = Vector3.zero;
+                Ray ray = new Ray(rayPos, Vector3.down);
+                if (Physics.Raycast(ray, out RaycastHit hit, 5000f, terrainMask)) {
+                    randomPosition.y = hit.point.y + 1;
+                    rotation = hit.normal;
+                }
+
+                transform.SetPositionAndRotation(randomPosition, Quaternion.Euler(rotation));*/
+            }
         }
 
         #endregion
@@ -294,6 +307,7 @@ namespace _Scripts.NetCode {
 
         struct PlayerData : INetworkSerializable {
             public ulong Id;
+
             public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter {
                 serializer.SerializeValue(ref Id);
             }

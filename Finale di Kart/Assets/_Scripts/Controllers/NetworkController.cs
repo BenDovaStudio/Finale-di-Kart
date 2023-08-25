@@ -281,6 +281,12 @@ namespace _Scripts.Controllers {
 
 		private async void OnApplicationQuit() {
 			await DeleteLobby();
+			// DisconnectFromServer();
+
+			if (_joinedLobby != null) {
+				string playerId = AuthenticationService.Instance.PlayerId;
+				await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, playerId);
+			}
 			if (nodeType != NodeType.None) {
 				// NetworkManager.Singleton.Shutdown();
 			}

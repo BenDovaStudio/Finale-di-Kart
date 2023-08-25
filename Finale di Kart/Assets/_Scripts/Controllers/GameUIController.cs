@@ -97,6 +97,7 @@ namespace _Scripts.Controllers {
 		private void Update() {
 			UpdateServerList();
 			if (Input.GetKeyDown(KeyCode.F8)) {
+				Debug.Log("KeyPressed");
 				networkStatsMonitor.Visible = !networkStatsMonitor.Visible;
 			}
 		}

@@ -3332,7 +3332,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11452418, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: toggleKey
-      value: 281
+      value: 278
       objectReference: {fileID: 0}
     - target: {fileID: 11452418, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: enablePopup
@@ -5191,6 +5191,141 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7031893938138298975, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_TreeDistance
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938138298975, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_DrawHeightmap
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938138298975, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_DrawInstanced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938138298975, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_SplatMapDistance
+      value: 800
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938138298975, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_ShadowCastingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938138298975, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_DetailObjectDensity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938138298975, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_DrawTreesAndFoliage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938138298975, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938138298975, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_TreeBillboardDistance
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938138298975, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_BakeLightProbesForTrees
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938138298975, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_TreeMaximumFullLODCount
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938612959210, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_TreeDistance
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938612959210, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_DrawInstanced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938612959210, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_SplatMapDistance
+      value: 800
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938612959210, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_ShadowCastingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938612959210, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_DrawTreesAndFoliage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938612959210, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938612959210, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_TreeBillboardDistance
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893938612959210, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_TreeMaximumFullLODCount
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939115621347, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_TreeDistance
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939115621347, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_DrawInstanced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939115621347, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_SplatMapDistance
+      value: 800
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939115621347, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_ShadowCastingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939115621347, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_DrawTreesAndFoliage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939115621347, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939115621347, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_TreeBillboardDistance
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939115621347, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_TreeMaximumFullLODCount
+      value: 80
+      objectReference: {fileID: 0}
     - target: {fileID: 7031893939122701704, guid: 26abbe08ad0cfa8499719dbc4801bede,
         type: 3}
       propertyPath: m_RootOrder
@@ -5250,6 +5385,46 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Map
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939208466268, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_TreeDistance
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939208466268, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_DrawInstanced
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939208466268, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_SplatMapDistance
+      value: 800
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939208466268, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_ShadowCastingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939208466268, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_DrawTreesAndFoliage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939208466268, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_ReflectionProbeUsage
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939208466268, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_TreeBillboardDistance
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031893939208466268, guid: 26abbe08ad0cfa8499719dbc4801bede,
+        type: 3}
+      propertyPath: m_TreeMaximumFullLODCount
+      value: 80
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26abbe08ad0cfa8499719dbc4801bede, type: 3}
@@ -8830,7 +9005,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17737e0516da2445b9b0077ae2bd9b4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Visible: 0
+  m_Visible: 1
   m_MaxRefreshRate: 30
   <CustomStyleSheet>k__BackingField: {fileID: 0}
   <PanelSettingsOverride>k__BackingField: {fileID: 0}
