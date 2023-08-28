@@ -243,7 +243,7 @@ namespace _Scripts.NetCode {
 
         #region Coroutines
 
-        private delegate void CoroutineEnds();
+        // private delegate void CoroutineEnds();
 
         private IEnumerator TimerRoutine(float duration, Action onCompleteAction) {
             float elapsedTime = 0;

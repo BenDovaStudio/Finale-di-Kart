@@ -23,7 +23,7 @@ namespace _Scripts.Managers
 
         public delegate void NetworkStatus(NetworkReachability networkReachability);
 
-        public static NetworkStatus OnNetworkCheck;
+        public static event NetworkStatus OnNetworkCheck;
 
         private string playerName = "User";
 

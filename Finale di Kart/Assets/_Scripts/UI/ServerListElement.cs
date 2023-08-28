@@ -32,7 +32,7 @@ namespace _Scripts.UI {
 
         public delegate void LobbySelection(Lobby lobby);
 
-        public static LobbySelection OnLobbySelect;
+        public static event LobbySelection OnLobbySelect;
 
         #endregion
 

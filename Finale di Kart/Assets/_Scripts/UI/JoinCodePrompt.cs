@@ -10,7 +10,7 @@ namespace _Scripts.Prompts {
 		// public delegate TextCompleted
 		public delegate void TextCompleted(string text);
 
-		public TextCompleted OnTextCompleted;
+		public event TextCompleted OnTextCompleted;
 
 		[SerializeField]
 		private TMP_InputField tmpInputField;
