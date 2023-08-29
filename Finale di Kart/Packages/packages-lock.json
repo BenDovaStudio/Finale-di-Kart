@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.unity.2d.sprite": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {}
+    },
     "com.unity.burst": {
       "version": "1.8.4",
       "depth": 1,
@@ -91,10 +97,10 @@
       "dependencies": {
         "com.unity.learn.iet-framework": "1.2.1",
         "com.unity.multiplayer.tools": "1.1.0",
-        "com.unity.netcode.gameobjects": "1.1.0",
+        "com.unity.netcode.gameobjects": "1.4.0",
         "com.unity.services.relay": "1.0.3"
       },
-      "hash": "a4cafe20622b588a27b1a11029185345fbebaa20"
+      "hash": "2787a8432b14cf65689d6d9f30c06f158e52fca3"
     },
     "com.unity.multiplayer.tools": {
       "version": "1.1.0",
