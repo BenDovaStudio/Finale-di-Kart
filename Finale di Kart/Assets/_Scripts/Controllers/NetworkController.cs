@@ -103,7 +103,12 @@ namespace _Scripts.Controllers {
 			if (heartbeatTimer < 0) {
 				heartbeatTimer = heartbeatCooldown;
 				Debug.Log("Sending Heartbeat");
-				await LobbyService.Instance.SendHeartbeatPingAsync(_createdLobby.Id);
+				try {
+					await LobbyService.Instance.SendHeartbeatPingAsync(_createdLobby.Id);
+				}
+				catch (LobbyServiceException e) {
+					Debug.Log(e);
+				}
 			}
 		}
 
@@ -285,7 +290,12 @@ namespace _Scripts.Controllers {
 
 			if (_joinedLobby != null) {
 				string playerId = AuthenticationService.Instance.PlayerId;
-				await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, playerId);
+				try {
+					await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, playerId);
+				}
+				catch (LobbyServiceException e) {
+					Debug.Log(e);
+				}
 			}
 			if (nodeType != NodeType.None) {
 				// NetworkManager.Singleton.Shutdown();

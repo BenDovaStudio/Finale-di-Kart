@@ -450,7 +450,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1016153461234866080}
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -534,8 +534,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 3036676095
+  m_fontColor: {r: 1, g: 1, b: 1, a: 0.7058824}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1307,6 +1307,8 @@ MonoBehaviour:
   lookAtTarget: {fileID: 0}
   lookAtConstraintComponent: {fileID: 4215125510640858572}
   theCard: {fileID: 7314926689198239209}
+  cardSprite: {fileID: 6635117387943427666}
+  playerNameText: {fileID: 2015914155534614466}
 --- !u!1 &1437360010167175147
 GameObject:
   m_ObjectHideFlags: 0
@@ -1708,7 +1710,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: c8670cbd6d46ef54bbd938dbd8ed1777, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.5882353}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1951,9 +1953,7 @@ LookAtConstraint:
   m_UseUpObject: 0
   m_IsContraintActive: 0
   m_IsLocked: 1
-  m_Sources:
-  - sourceTransform: {fileID: 602151747817182}
-    weight: 1
+  m_Sources: []
 --- !u!1 &6917525634930275910
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,55 +1,24 @@
-using System;
-using UnityEngine;
-using UnityEngine.Serialization;
+using Unity.Collections;
+using Unity.Netcode;
 
-// namespace _Scripts {
-    // [Serializable]
-    /*public class ChallengePair {
-        public (ulong, ulong) Pair { get; }
-        public ulong Initiator { get; }
-        public ulong Target { get; }
-        public ChallengeState challengeState;
-        public Coroutine TimerRoutine;
-        public int listIndex;
+namespace _Scripts {
+    public struct PlayerNameNv : INetworkSerializable {
+        private FixedString32Bytes playerNumber;
 
 
-        public ChallengePair(ulong initiator, ulong target) {
-            Initiator = initiator;
-            Target = target;
-
-            Pair = (Math.Min(initiator, target), Math.Max(initiator, target));
-
-            challengeState = ChallengeState.Requested;
-            TimerRoutine = null;
-            listIndex = -1;
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter {
+            serializer.SerializeValue(ref playerNumber);
         }
-    }
 
-
-
-    public struct DuelRequest {
-        public ulong Initiator;
-        public ulong Target;
-        public ChallengeState ChallengeState;
+        public override string ToString() {
+            return playerNumber.ToString();
+        }
         
         
-        public DuelRequest(ulong initiator, ulong target, ChallengeState challengeState) {
-            Initiator = initiator;
-            Target = target;
-            ChallengeState = challengeState;
-        }
+        // Some random methods that are copy-pasta :)
+        public static implicit operator string(PlayerNameNv pn) => pn.ToString();
+        public static implicit operator PlayerNameNv(string s) => new PlayerNameNv() {
+            playerNumber = new FixedString32Bytes(s)
+        };
     }
-
-    public struct Duel {
-        public ulong Initiator;
-        public ulong Target;
-        public ChallengeState ChallengeState;
-
-
-        public Duel(ulong initiator, ulong target, ChallengeState challengeState) {
-            Initiator = initiator;
-            Target = target;
-            ChallengeState = challengeState;
-        }
-    }
-}*/
+}

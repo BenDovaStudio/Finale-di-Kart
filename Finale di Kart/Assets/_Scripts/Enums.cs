@@ -9,10 +9,8 @@ namespace _Scripts
 
 
     public enum ChallengeState {
-        Requested,
         Rejected,
         Accepted,
-        InProgress,
     }
 
     public enum ChallengeResponse {

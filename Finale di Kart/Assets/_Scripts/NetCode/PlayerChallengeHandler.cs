@@ -1,10 +1,8 @@
 using System;
 using System.Collections;
 using _Scripts.Controllers;
-using _Scripts.Track;
 using Unity.Netcode;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace _Scripts.NetCode {
     public class PlayerChallengeHandler : NetworkBehaviour {
@@ -17,10 +15,8 @@ namespace _Scripts.NetCode {
         [SerializeField] private bool isWaitingForResponse = false;
         [SerializeField] private bool isBeingWaitedUpon = false;
 
-        private int currentInitiatedId = -1;
-        private int currentTargetId = -1;
-
-
+        // private int currentInitiatedId = -1;
+        // private int currentTargetId = -1;
 
         private readonly ulong[] targetClientArray = new ulong[1];
 
@@ -35,12 +31,12 @@ namespace _Scripts.NetCode {
         private void Update() {
             if (isBeingWaitedUpon) {
                 if (Input.GetKeyDown(KeyCode.Y)) {
-                    ReplyChallengeServerRpc(ChallengeResponse.Accept, (ulong)lockedClientId);
+                    // ReplyChallengeServerRpc(ChallengeResponse.Accept, (ulong)lockedClientId);
                     GameUIController.Instance.DisablePrompt();
                     isBeingWaitedUpon = false;
                 }
                 else if (Input.GetKeyDown(KeyCode.N)) {
-                    ReplyChallengeServerRpc(ChallengeResponse.Reject, (ulong)lockedClientId);
+                    // ReplyChallengeServerRpc(ChallengeResponse.Reject, (ulong)lockedClientId);
                     GameUIController.Instance.DisablePrompt();
                     isBeingWaitedUpon = false;
                 }
@@ -49,7 +45,9 @@ namespace _Scripts.NetCode {
             if (lockedClientId < 0) return;
             if (isWaitingForResponse) return;
             if (Input.GetKeyDown(KeyCode.G)) {
-                InitiateChallengeServerRpc((ulong)lockedClientId);
+                // InitiateChallengeServerRpc((ulong)lockedClientId);
+                InitiateChallengeBeginServerRpc((ulong)lockedClientId);
+                isWaitingForResponse = true;
             }
         }
 
@@ -84,7 +82,7 @@ namespace _Scripts.NetCode {
 
 
         // Will Get called upon challenge initiate request
-        [ServerRpc]
+        /*[ServerRpc]
         private void InitiateChallengeServerRpc(ulong targetClientId, ServerRpcParams serverRpcParams = default) {
             Debug.Log(
                 $"{gameObject.name}:-> InitiateChallengeServerRpc >> IsServer: {IsServer}, IsOwnedByServer: {IsOwnedByServer}, IsOwner: {IsOwner}, OwnerClientId: {OwnerClientId}, IsLocalPlayer: {IsLocalPlayer}, IsClient: {IsClient}, IsSpawned: {IsSpawned}");
@@ -138,7 +136,7 @@ namespace _Scripts.NetCode {
         }
         initiatedRequestClientIds.Add((int)senderClientId);
         beingWaitedUponClientIds.Add((int)targetClientId);
-        */
+        #1#
 
             StartCoroutine(TimerRoutine(requestTimeout, () => {
                 ResetChallengeClientRpc(initiatorClientRpcParams);
@@ -150,9 +148,9 @@ namespace _Scripts.NetCode {
 
             // inform the target about the challenge request
             ReceiveChallengeRequestClientRpc(senderClientId, requestTimeout, targetClientRpcParams);
-        }
+        }*/
 
-        [ServerRpc(RequireOwnership = false)]
+        /*[ServerRpc(RequireOwnership = false)]
         private void ReplyChallengeServerRpc(ChallengeResponse response, ulong challengerId, ServerRpcParams serverRpcParams = default) {
             Debug.Log(
                 $"{gameObject.name}:-> ReplyChallengeServerRpc >> IsServer: {IsServer}, IsOwnedByServer: {IsOwnedByServer}, IsOwner: {IsOwner}, OwnerClientId: {OwnerClientId}, IsLocalPlayer: {IsLocalPlayer}, IsClient: {IsClient}, IsSpawned: {IsSpawned}");
@@ -186,16 +184,25 @@ namespace _Scripts.NetCode {
 
             currentInitiatedId = -1;
             currentTargetId = -1;
+        }*/
+        
+        [ServerRpc]
+        private void InitiateChallengeBeginServerRpc(ulong targetId, ServerRpcParams serverParams = default) {
+            if (!IsServer) return;
+            var challengerId = serverParams.Receive.SenderClientId;
+            DuelHandler.OnChallengeStatusUpdate += OnChallengeStatus;
+            OnChallengeInitiateRequest?.Invoke(challengerId, targetId);
         }
 
-
-
+        
         #endregion
 
 
         #region ClientRPCs
 
-        [ClientRpc]
+        #region Old Mess
+
+        /*[ClientRpc]
         private void InitiatedChallengeRequestClientRpc(float timeoutDuration, ClientRpcParams clientRpcParams = default) {
             Debug.Log(
                 $"{gameObject.name}:-> InitiatedChallengeRequestClientRpc >> IsServer: {IsServer}, IsOwnedByServer: {IsOwnedByServer}, IsOwner: {IsOwner}, OwnerClientId: {OwnerClientId}, IsLocalPlayer: {IsLocalPlayer}, IsClient: {IsClient}, IsSpawned: {IsSpawned}");
@@ -203,9 +210,9 @@ namespace _Scripts.NetCode {
             if (!IsOwner) return;
             isWaitingForResponse = true;
             GameUIController.Instance.PromptWaiting(timeoutDuration);
-        }
+        }*/
 
-        [ClientRpc]
+        /*[ClientRpc]
         private void ReceiveChallengeRequestClientRpc(ulong challengerId, float timeoutDuration, ClientRpcParams clientRpcParams = default) {
             Debug.Log(
                 $"{gameObject.name}:-> RecieveChallengeRequestClientRpc >> IsServer: {IsServer}, IsOwnedByServer: {IsOwnedByServer}, IsOwner: {IsOwner}, OwnerClientId: {OwnerClientId}, IsLocalPlayer: {IsLocalPlayer}, IsClient: {IsClient}, IsSpawned: {IsSpawned}");
@@ -214,9 +221,9 @@ namespace _Scripts.NetCode {
             lockedClientId = (int)challengerId;
             Debug.Log("Waiting for user response");
             GameUIController.Instance.PromptAffirmation(timeoutDuration);
-        }
+        }*/
 
-        [ClientRpc]
+        /*[ClientRpc]
         private void ResetChallengeClientRpc(ClientRpcParams clientRpcParams = default) {
             Debug.Log(
                 $"{gameObject.name}:-> ResetChallengeClientRpc >> IsServer: {IsServer}, IsOwnedByServer: {IsOwnedByServer}, IsOwner: {IsOwner}, OwnerClientId: {OwnerClientId}, IsLocalPlayer: {IsLocalPlayer}, IsClient: {IsClient}, IsSpawned: {IsSpawned}");
@@ -225,9 +232,9 @@ namespace _Scripts.NetCode {
             isWaitingForResponse = false;
             lockedClientId = -1;
             // clientRpcParams.Receive.
-        }
+        }*/
 
-        [ClientRpc]
+        /*[ClientRpc]
         private void TeleportThemMFersClientRpc(Vector3 pos, ClientRpcParams clientRpcParams = default) {
             Debug.Log(
                 $"{gameObject.name}:-> TeleportThemMFersClientRpc >> IsServer: {IsServer}, IsOwnedByServer: {IsOwnedByServer}, IsOwner: {IsOwner}, OwnerClientId: {OwnerClientId}, IsLocalPlayer: {IsLocalPlayer}, IsClient: {IsClient}, IsSpawned: {IsSpawned}");
@@ -236,6 +243,32 @@ namespace _Scripts.NetCode {
             // NetworkManager.Singleton.ConnectedClients[OwnerClientId].PlayerObject.transform.position = pos;
             Debug.Log("Hello " + OwnerClientId);
             transform.position = pos;
+        }*/
+        
+
+        #endregion
+        
+        [ClientRpc]
+        private void ReceiveChallengeClientRpc(ulong challengerId, ClientRpcParams clientParams = default) {
+            if (!IsOwner) return;
+            // TODO - Pop Accept challenge prompt here
+        }
+
+
+        [ClientRpc]
+        private void ChallengeStatusUpdateClientRpc(ChallengeState status, ClientRpcParams clientParams = default) {
+            if (!IsOwner) return;
+            switch (status) {
+                case ChallengeState.Accepted: {
+                    Debug.Log("Challenge Initiated, wait for response");
+                    break;
+                }
+                case ChallengeState.Rejected: {
+                    Debug.Log("Challenge Rejected");
+                    isWaitingForResponse = false;
+                    break;
+                }
+            }
         }
 
         #endregion
@@ -260,8 +293,6 @@ namespace _Scripts.NetCode {
         #endregion
 
 
-        #region Custom Methods
-
         /*private bool HasInitiated(int clientId) {
         return initiatedRequestClientIds.Contains(clientId);
     }
@@ -271,20 +302,23 @@ namespace _Scripts.NetCode {
         return beingWaitedUponClientIds.Contains(clientId);
     }*/
 
+        #region Builtin Methods (Network)
 
         public override void OnNetworkSpawn() {
-            base.OnNetworkSpawn();
-            if (IsServer && (IsOwnedByServer || IsOwner))
-                gameObject.name = "ServerObj";
-            if (IsClient && IsOwner)
-                gameObject.name = $"Self_Client_{OwnerClientId}";
-            if (IsClient && !IsOwner)
-                gameObject.name = $"Other_Client_{OwnerClientId}";
-            if (IsClient && IsOwnedByServer)
-                gameObject.name = $"Other(ServerOwned)_Client_{OwnerClientId}";
-            if (IsServer && (!IsOwner || !IsOwnedByServer))
-                gameObject.name = $"Other_Client_{OwnerClientId}";
+            #region Player Game Object name setup
 
+            if (IsServer && (IsOwnedByServer || IsOwner)) gameObject.name = "ServerObj";
+            if (IsClient && IsOwner) gameObject.name = $"Self_Client_{OwnerClientId}";
+            if (IsClient && !IsOwner) gameObject.name = $"Other_Client_{OwnerClientId}";
+            if (IsClient && IsOwnedByServer) gameObject.name = $"Other(ServerOwned)_Client_{OwnerClientId}";
+            if (IsServer && (!IsOwner || !IsOwnedByServer)) gameObject.name = $"Other_Client_{OwnerClientId}";
+
+            #endregion
+
+            if(IsServer){
+                SetUpListeners();
+            }
+            
             if (IsOwner) {
                 /*  Spawn Location Randomizer, currently it is spawning on top of the water... like... come on... :(
                  var randomPosition = new Vector3(Random.Range(0, 100f), 0, Random.Range(0f, 100f));
@@ -300,6 +334,51 @@ namespace _Scripts.NetCode {
 
                 transform.SetPositionAndRotation(randomPosition, Quaternion.Euler(rotation));*/
             }
+        }
+        public override void OnNetworkDespawn() {
+            if(IsServer){
+                RemoveListeners();
+            }
+        }
+
+        #endregion
+
+        #region Custom Events (Network)
+
+        public static event Action<ulong, ulong> OnChallengeInitiateRequest;
+
+        #endregion
+
+        #region Custom Event Methods (Network)
+
+        private void ChallengeRequestBroadcastEvent(ulong challengerId, ulong targetId) {
+            if (targetId == OwnerClientId) {
+                targetClientArray[0] = targetId;
+                ClientRpcParams targetClientParams = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = targetClientArray } };
+                ReceiveChallengeClientRpc(challengerId, targetClientParams);
+            }
+        }
+
+
+        private void OnChallengeStatus(ulong challengerId, ChallengeState status) {
+            if (OwnerClientId != challengerId) return;
+            targetClientArray[0] = challengerId;
+            var challengeClientParams = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = targetClientArray } };
+            ChallengeStatusUpdateClientRpc(status, challengeClientParams);
+            DuelHandler.OnChallengeStatusUpdate -= OnChallengeStatus;
+        }
+
+        #endregion
+
+
+        #region Custom Methods
+
+        private void SetUpListeners() {
+            DuelHandler.OnBroadcastChallengeRequest += ChallengeRequestBroadcastEvent;
+        }
+
+        private void RemoveListeners() {
+            DuelHandler.OnBroadcastChallengeRequest -= ChallengeRequestBroadcastEvent;
         }
 
         #endregion
