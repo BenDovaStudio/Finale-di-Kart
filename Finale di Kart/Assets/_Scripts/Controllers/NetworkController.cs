@@ -227,7 +227,7 @@ namespace _Scripts.Controllers {
 						break;
 					}
 
-					Debug.Log($"match at index {i}");
+					// Debug.Log($"match at index {i}");
 				}
 
 				if (codeMatch) {

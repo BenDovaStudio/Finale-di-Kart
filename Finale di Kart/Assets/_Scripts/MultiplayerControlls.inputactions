@@ -1,0 +1,74 @@
+{
+    "name": "MultiplayerControlls",
+    "maps": [
+        {
+            "name": "ChallengeInteraction",
+            "id": "60940b70-2546-4169-9a3b-1e8a1f51135b",
+            "actions": [
+                {
+                    "name": "InitiateChallenge",
+                    "type": "Button",
+                    "id": "a603d52e-a937-4671-913f-22e3b7c64866",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "AcceptChallenge",
+                    "type": "Button",
+                    "id": "7fd804c0-844c-465a-b1fb-5eb308fffb6a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RejectChallenge",
+                    "type": "Button",
+                    "id": "baebf11b-6a6a-4ccf-9d9a-aa6c67807a6d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "527d453a-4b9a-4c9f-86ae-1378d2bf7ba7",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InitiateChallenge",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "aa523d8d-2cce-44a5-b630-ab7a1f2cd1fb",
+                    "path": "<Keyboard>/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AcceptChallenge",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9890a5f9-d301-40b6-b55e-f81e87ebab57",
+                    "path": "<Keyboard>/n",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RejectChallenge",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

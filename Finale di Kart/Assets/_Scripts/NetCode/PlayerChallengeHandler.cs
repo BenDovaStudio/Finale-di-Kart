@@ -1,11 +1,30 @@
 using System;
 using System.Collections;
 using _Scripts.Controllers;
+using DG.Tweening;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace _Scripts.NetCode {
     public class PlayerChallengeHandler : NetworkBehaviour {
+
+        #region Multiplayer Inputs
+
+        private bool useMultiplayerInputs = false;
+
+        [SerializeField] private PlayerInput multiplayerInputs;
+        private InputAction initiateChallenge;
+        private InputAction acceptChallenge;
+        private InputAction rejectChallenge;
+
+        #endregion
+
+
+        private Vector3 posBeforeSpawnForRace;
+        private Quaternion rotBeforeSpawnForRace;
+
+
 
 
         [SerializeField] private LayerMask terrainMask;
@@ -15,11 +34,18 @@ namespace _Scripts.NetCode {
         [SerializeField] private bool isWaitingForResponse = false;
         [SerializeField] private bool isBeingWaitedUpon = false;
 
-        // private int currentInitiatedId = -1;
-        // private int currentTargetId = -1;
 
+        private ulong challengerId = ulong.MaxValue;
+
+        private Tween tween;
+        
         private readonly ulong[] targetClientArray = new ulong[1];
 
+
+
+        // private int currentInitiatedId = -1;
+
+        // private int currentTargetId = -1;
 
         /*[SerializeField] private List<int> beingWaitedUponClientIds = new List<int>();
 
@@ -28,8 +54,23 @@ namespace _Scripts.NetCode {
 
         #region Builtin Methods
 
+        private void Awake() {
+            initiateChallenge = multiplayerInputs.actions.FindAction(AppConstants.InitiateChallenge, true);
+            acceptChallenge = multiplayerInputs.actions.FindAction(AppConstants.AcceptChallenge, true);
+            rejectChallenge = multiplayerInputs.actions.FindAction(AppConstants.RejectChallenge, true);
+        }
+
+        private void OnEnable() {
+            InputEventSetup(true);
+        }
+
+        private void OnDisable() {
+            InputEventSetup(false);
+        }
+
         private void Update() {
-            if (isBeingWaitedUpon) {
+            // TODO - Comment these out once Input actions are set
+            /*if (isBeingWaitedUpon) {
                 if (Input.GetKeyDown(KeyCode.Y)) {
                     // ReplyChallengeServerRpc(ChallengeResponse.Accept, (ulong)lockedClientId);
                     GameUIController.Instance.DisablePrompt();
@@ -40,15 +81,13 @@ namespace _Scripts.NetCode {
                     GameUIController.Instance.DisablePrompt();
                     isBeingWaitedUpon = false;
                 }
-            }
+            }*/
 
-            if (lockedClientId < 0) return;
-            if (isWaitingForResponse) return;
-            if (Input.GetKeyDown(KeyCode.G)) {
+            /*if (lockedClientId < 0) return;
+            if (isWaitingForResponse) return;*/
+            /*if (Input.GetKeyDown(KeyCode.G)) {
                 // InitiateChallengeServerRpc((ulong)lockedClientId);
-                InitiateChallengeBeginServerRpc((ulong)lockedClientId);
-                isWaitingForResponse = true;
-            }
+            }*/
         }
 
         private void OnTriggerEnter(Collider other) {
@@ -58,6 +97,7 @@ namespace _Scripts.NetCode {
             var otherDude = other.transform.GetComponentInParent<NetworkObject>();
             if (otherDude != null) {
                 lockedClientId = (int)otherDude.OwnerClientId;
+                if (isBeingWaitedUpon || isWaitingForResponse) return;
                 GameUIController.Instance.PromptInitiateRace();
             }
         }
@@ -185,16 +225,24 @@ namespace _Scripts.NetCode {
             currentInitiatedId = -1;
             currentTargetId = -1;
         }*/
-        
+
         [ServerRpc]
         private void InitiateChallengeBeginServerRpc(ulong targetId, ServerRpcParams serverParams = default) {
             if (!IsServer) return;
-            var challengerId = serverParams.Receive.SenderClientId;
+            var challenger = serverParams.Receive.SenderClientId;
             DuelHandler.OnChallengeStatusUpdate += OnChallengeStatus;
-            OnChallengeInitiateRequest?.Invoke(challengerId, targetId);
+            OnChallengeInitiateRequest?.Invoke(challenger, targetId);
         }
 
-        
+
+        [ServerRpc]
+        private void ChallengeResponseServerRpc(ulong challenger,ChallengeResponse response, ServerRpcParams serverParams = default) {
+            if (!IsServer) return;
+            var target = serverParams.Receive.SenderClientId;
+            OnChallengeResponse?.Invoke(challenger, target, response);
+        }
+
+
         #endregion
 
 
@@ -244,31 +292,51 @@ namespace _Scripts.NetCode {
             Debug.Log("Hello " + OwnerClientId);
             transform.position = pos;
         }*/
-        
+
 
         #endregion
+
+        [ClientRpc]
+        private void ReceiveChallengeClientRpc(ulong challenger, float timeout, ClientRpcParams clientParams = default) {
+            if (!IsOwner) return;
+            Debug.Log($"Received Challenge Req from -> Player {challenger:D2}");
+            isBeingWaitedUpon = true;
+            challengerId = challenger;
+            GameUIController.Instance.PromptAffirmation(timeout);
+            tween = DOVirtual.DelayedCall(timeout, () => {
+                Debug.Log("Disabling prompt from tween");
+                GameUIController.Instance.DisablePrompt();
+                isBeingWaitedUpon = false;
+            });
+        }
         
         [ClientRpc]
-        private void ReceiveChallengeClientRpc(ulong challengerId, ClientRpcParams clientParams = default) {
+        private void ChallengeStatusUpdateClientRpc(ChallengeState status, float timeoutDuration, ClientRpcParams clientParams = default) {
+            // Debug.Log("Executing RPC");
             if (!IsOwner) return;
-            // TODO - Pop Accept challenge prompt here
-        }
-
-
-        [ClientRpc]
-        private void ChallengeStatusUpdateClientRpc(ChallengeState status, ClientRpcParams clientParams = default) {
-            if (!IsOwner) return;
+            // Debug.Log("Is RPC owner");
             switch (status) {
                 case ChallengeState.Accepted: {
-                    Debug.Log("Challenge Initiated, wait for response");
+                    // Debug.Log("Challenge Initiated, wait for response");
+                    // GameUIController.Instance.DisablePrompt();
+                    GameUIController.Instance.PromptWaiting(timeoutDuration);
                     break;
                 }
                 case ChallengeState.Rejected: {
-                    Debug.Log("Challenge Rejected");
+                    // Debug.Log("Challenge Rejected");
+                    GameUIController.Instance.DisablePrompt();
+                    lockedClientId = -1;
                     isWaitingForResponse = false;
+                    DuelHandler.OnChallengeStatusUpdate -= OnChallengeStatus;
                     break;
                 }
             }
+        }
+
+        [ClientRpc]
+        private void SpawnAtTrackClientRpc(Vector3 spawnPos, Quaternion spawnRot, ClientRpcParams clientParams = default) {
+            if (!IsOwner) return;
+            transform.SetPositionAndRotation(spawnPos, spawnRot);
         }
 
         #endregion
@@ -278,16 +346,16 @@ namespace _Scripts.NetCode {
 
         // private delegate void CoroutineEnds();
 
-        private IEnumerator TimerRoutine(float duration, Action onCompleteAction) {
-            float elapsedTime = 0;
-            while (elapsedTime < duration) {
-                elapsedTime += Time.unscaledDeltaTime;
-                yield return new WaitForEndOfFrame();
-            }
-
-            onCompleteAction?.Invoke();
-            // _onTimerEnd?.Invoke();
-        }
+        // private IEnumerator TimerRoutine(float duration, Action onCompleteAction) {
+        //     float elapsedTime = 0;
+        //     while (elapsedTime < duration) {
+        //         elapsedTime += Time.unscaledDeltaTime;
+        //         yield return new WaitForEndOfFrame();
+        //     }
+        //
+        //     onCompleteAction?.Invoke();
+        //     // _onTimerEnd?.Invoke();
+        // }
 
 
         #endregion
@@ -315,11 +383,12 @@ namespace _Scripts.NetCode {
 
             #endregion
 
-            if(IsServer){
+            if (IsServer) {
                 SetUpListeners();
             }
-            
+
             if (IsOwner) {
+                useMultiplayerInputs = true;
                 /*  Spawn Location Randomizer, currently it is spawning on top of the water... like... come on... :(
                  var randomPosition = new Vector3(Random.Range(0, 100f), 0, Random.Range(0f, 100f));
                 // randomPosition.y = 1000;
@@ -335,10 +404,13 @@ namespace _Scripts.NetCode {
                 transform.SetPositionAndRotation(randomPosition, Quaternion.Euler(rotation));*/
             }
         }
+
         public override void OnNetworkDespawn() {
-            if(IsServer){
+            if (IsServer) {
                 RemoveListeners();
             }
+
+            useMultiplayerInputs = false;
         }
 
         #endregion
@@ -346,26 +418,83 @@ namespace _Scripts.NetCode {
         #region Custom Events (Network)
 
         public static event Action<ulong, ulong> OnChallengeInitiateRequest;
+        public static event Action<ulong, ulong, ChallengeResponse> OnChallengeResponse;
+
+        #endregion
+
+        #region Custom Event Methods
+
+        private void OnInitiateInput(InputAction.CallbackContext context) {
+            if (!useMultiplayerInputs || isBeingWaitedUpon || isWaitingForResponse) return;
+
+            isWaitingForResponse = true;
+            InitiateChallengeBeginServerRpc((ulong)lockedClientId);
+        }
+
+        private void OnAcceptInput(InputAction.CallbackContext context) {
+            if (!useMultiplayerInputs || !isBeingWaitedUpon || isWaitingForResponse) return;
+            tween?.Kill();
+            GameUIController.Instance.DisablePrompt();
+            // Debug.Log("Challenge Accepted");
+            if(challengerId < 11) {
+                ChallengeResponseServerRpc(challengerId, ChallengeResponse.Accept);
+                // isBeingWaitedUpon = false;
+            }
+        }
+
+        private void OnRejectInput(InputAction.CallbackContext context) {
+            if (!useMultiplayerInputs || !isBeingWaitedUpon || isWaitingForResponse) return;
+            tween?.Kill();
+            GameUIController.Instance.DisablePrompt();
+            // Debug.Log("Challenge Rejected");
+            if(challengerId < 11) {
+                ChallengeResponseServerRpc(challengerId, ChallengeResponse.Reject);
+                challengerId = ulong.MaxValue;
+                isBeingWaitedUpon = false;
+            }
+        }
 
         #endregion
 
         #region Custom Event Methods (Network)
 
-        private void ChallengeRequestBroadcastEvent(ulong challengerId, ulong targetId) {
+        private void ChallengeRequestBroadcastEvent(ulong challenger, ulong targetId, float timeout) {
             if (targetId == OwnerClientId) {
                 targetClientArray[0] = targetId;
                 ClientRpcParams targetClientParams = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = targetClientArray } };
-                ReceiveChallengeClientRpc(challengerId, targetClientParams);
+                ReceiveChallengeClientRpc(challenger, timeout, targetClientParams);
             }
         }
 
 
-        private void OnChallengeStatus(ulong challengerId, ChallengeState status) {
-            if (OwnerClientId != challengerId) return;
-            targetClientArray[0] = challengerId;
+        private void OnChallengeStatus(ulong challenger, float timeoutDuration, ChallengeState status) {
+            if (OwnerClientId != challenger) return;
+            // Debug.Log("Received Challenge status update");
+            targetClientArray[0] = challenger;
             var challengeClientParams = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = targetClientArray } };
-            ChallengeStatusUpdateClientRpc(status, challengeClientParams);
-            DuelHandler.OnChallengeStatusUpdate -= OnChallengeStatus;
+            ChallengeStatusUpdateClientRpc(status, timeoutDuration, challengeClientParams);
+            // DuelHandler.OnChallengeStatusUpdate -= OnChallengeStatus;
+        }
+
+
+        private void OnDuelBeginEvent(ulong challenger, ulong target, Vector3 challengerSpawn, Vector3 targetSpawn, Quaternion spawnRotation) {
+            var myTransform = transform;
+            if (challenger == OwnerClientId) {
+                StoreWorldPosAndRot(myTransform);
+
+                targetClientArray[0] = challenger;
+                ClientRpcParams targetClientParams = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = targetClientArray } };
+                // spawn challenger
+                SpawnAtTrackClientRpc(challengerSpawn, spawnRotation, targetClientParams);
+            }
+            else if (target == OwnerClientId) {
+                StoreWorldPosAndRot(myTransform);
+
+                targetClientArray[0] = target;
+                ClientRpcParams targetClientParams = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = targetClientArray } };
+                // spawn target
+                SpawnAtTrackClientRpc(targetSpawn, spawnRotation, targetClientParams);
+            }
         }
 
         #endregion
@@ -375,21 +504,40 @@ namespace _Scripts.NetCode {
 
         private void SetUpListeners() {
             DuelHandler.OnBroadcastChallengeRequest += ChallengeRequestBroadcastEvent;
+            DuelHandler.OnDuelBegin += OnDuelBeginEvent;
         }
 
         private void RemoveListeners() {
             DuelHandler.OnBroadcastChallengeRequest -= ChallengeRequestBroadcastEvent;
         }
 
+        private void InputEventSetup(bool isEnable) {
+            if (isEnable) {
+                initiateChallenge.performed += OnInitiateInput;
+                acceptChallenge.performed += OnAcceptInput;
+                rejectChallenge.performed += OnRejectInput;
+            }
+            else {
+                initiateChallenge.performed -= OnInitiateInput;
+                acceptChallenge.performed -= OnAcceptInput;
+                rejectChallenge.performed -= OnRejectInput;
+            }
+        }
+
+        private void StoreWorldPosAndRot(Transform myTransform) {
+            posBeforeSpawnForRace = myTransform.position;
+            rotBeforeSpawnForRace = myTransform.rotation;
+        }
+
         #endregion
 
 
-        struct PlayerData : INetworkSerializable {
+        /*struct PlayerData : INetworkSerializable {
             public ulong Id;
 
             public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter {
                 serializer.SerializeValue(ref Id);
             }
-        }
+        }*/
     }
 }

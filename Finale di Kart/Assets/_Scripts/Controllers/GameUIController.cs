@@ -233,7 +233,6 @@ namespace _Scripts.Controllers {
 			timeElapsed += Time.unscaledDeltaTime;
 			yield return new WaitForEndOfFrame();
 		}
-
 	}
 
 	#endregion
