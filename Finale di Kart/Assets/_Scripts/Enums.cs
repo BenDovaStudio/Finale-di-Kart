@@ -17,4 +17,9 @@ namespace _Scripts
         Accept,
         Reject,
     }
+
+    public enum RaceConclusion {
+        Win,
+        Lose,
+    }
 }

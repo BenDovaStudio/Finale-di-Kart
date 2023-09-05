@@ -18,6 +18,8 @@ namespace _Scripts.Controllers {
         [SerializeField] private List<int> activeTargets;
 
         [SerializeField] private ChallengePairs pairs = new ChallengePairs();
+        
+        
 
         #endregion
 
@@ -54,6 +56,10 @@ namespace _Scripts.Controllers {
         public static event Action<ulong, float, ChallengeState> OnChallengeStatusUpdate;
 
         public static event Action<ulong, ulong, Vector3, Vector3, Quaternion> OnDuelBegin;
+
+
+
+        public static event Action<ulong, RaceConclusion> RaceConclusionEvent;
 
         #endregion
 
@@ -95,14 +101,17 @@ namespace _Scripts.Controllers {
             switch (response) {
                 case ChallengeResponse.Accept: {
                     // TODO - Instantiate track and spawn them mfrs
+
+                    // Player Spawn Offset +-1.5x, 0.15y, 2.5z
+                    var duelTrackIndex = trackGenerator.GenerateServerTrack(out var playerSpawn);
+
+                    if (duelTrackIndex < 0) return;
                     
                     Debug.Log("Spawning them on their respected tracks");
                     
+                    var vectNegPos = new Vector3(playerSpawn.x - 1.5f, playerSpawn.y + 0.15f, playerSpawn.z + 2.5f);
+                    var vectPosPos = new Vector3(playerSpawn.x + 1.5f, playerSpawn.y + 0.15f, playerSpawn.z + 2.5f);
                     
-                    // TODO - REMOVE THIS AFTER TESTING
-
-                    var vectNegPos = new Vector3(-5f, 3f, 0f);
-                    var vectPosPos = new Vector3(5f, 3f, 0f);
                     
                     OnDuelBegin?.Invoke(challengerId, targetId, vectPosPos, vectNegPos, quaternion.identity);
                     
@@ -123,6 +132,12 @@ namespace _Scripts.Controllers {
             }
         }
 
+
+        private void OnRaceFinishEvent(ulong winner, ulong loser) {
+            RaceConclusionEvent?.Invoke(winner, RaceConclusion.Win);
+            RaceConclusionEvent?.Invoke(loser, RaceConclusion.Lose);
+        }
+
         #endregion
 
 
@@ -131,6 +146,7 @@ namespace _Scripts.Controllers {
         private void SetUpEventListeners() {
             PlayerChallengeHandler.OnChallengeInitiateRequest += OnChallengeInitiateRequestEvent;
             PlayerChallengeHandler.OnChallengeResponse += OnChallengeResponseEvent;
+            PlayerChallengeHandler.OnRaceFinish += OnRaceFinishEvent;
         }
 
         private void RemoveListeners() {

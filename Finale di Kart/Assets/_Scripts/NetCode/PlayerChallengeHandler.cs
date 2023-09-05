@@ -1,10 +1,13 @@
 using System;
 using System.Collections;
+using System.Net;
 using _Scripts.Controllers;
 using DG.Tweening;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using ClientRpcParams = Unity.Netcode.ClientRpcParams;
 
 namespace _Scripts.NetCode {
     public class PlayerChallengeHandler : NetworkBehaviour {
@@ -37,6 +40,9 @@ namespace _Scripts.NetCode {
 
         private ulong challengerId = ulong.MaxValue;
 
+
+        private ulong raceOpponentId = ulong.MaxValue;
+
         private Tween tween;
         
         private readonly ulong[] targetClientArray = new ulong[1];
@@ -68,38 +74,23 @@ namespace _Scripts.NetCode {
             InputEventSetup(false);
         }
 
-        private void Update() {
-            // TODO - Comment these out once Input actions are set
-            /*if (isBeingWaitedUpon) {
-                if (Input.GetKeyDown(KeyCode.Y)) {
-                    // ReplyChallengeServerRpc(ChallengeResponse.Accept, (ulong)lockedClientId);
-                    GameUIController.Instance.DisablePrompt();
-                    isBeingWaitedUpon = false;
-                }
-                else if (Input.GetKeyDown(KeyCode.N)) {
-                    // ReplyChallengeServerRpc(ChallengeResponse.Reject, (ulong)lockedClientId);
-                    GameUIController.Instance.DisablePrompt();
-                    isBeingWaitedUpon = false;
-                }
-            }*/
-
-            /*if (lockedClientId < 0) return;
-            if (isWaitingForResponse) return;*/
-            /*if (Input.GetKeyDown(KeyCode.G)) {
-                // InitiateChallengeServerRpc((ulong)lockedClientId);
-            }*/
-        }
-
         private void OnTriggerEnter(Collider other) {
+            if (IsServer) {
+                if (other.CompareTag(AppConstants.FinishTrigger)) {
+                    // Debug.Log();
+                    OnRaceFinish?.Invoke(OwnerClientId, raceOpponentId);
+                }
+            }
+
             if (!IsOwner) return;
             if (!other.CompareTag("Player")) return;
             if (lockedClientId >= 0) return;
             var otherDude = other.transform.GetComponentInParent<NetworkObject>();
-            if (otherDude != null) {
-                lockedClientId = (int)otherDude.OwnerClientId;
-                if (isBeingWaitedUpon || isWaitingForResponse) return;
-                GameUIController.Instance.PromptInitiateRace();
-            }
+            
+            if (otherDude == null) return;
+            lockedClientId = (int)otherDude.OwnerClientId;
+            if (isBeingWaitedUpon || isWaitingForResponse) return;
+            GameUIController.Instance.PromptInitiateRace();
         }
 
         private void OnTriggerExit(Collider other) {
@@ -334,9 +325,29 @@ namespace _Scripts.NetCode {
         }
 
         [ClientRpc]
-        private void SpawnAtTrackClientRpc(Vector3 spawnPos, Quaternion spawnRot, ClientRpcParams clientParams = default) {
+        private void SpawnAtTrackClientRpc(Vector3 spawnPos, Quaternion spawnRot, ulong opponent, ClientRpcParams clientParams = default) {
             if (!IsOwner) return;
+            raceOpponentId = opponent;
             transform.SetPositionAndRotation(spawnPos, spawnRot);
+        }
+
+
+        [ClientRpc]
+        private void RaceConclusionClientRpc(Vector3 oldPos, Quaternion oldRot, RaceConclusion conclusion, ClientRpcParams clientParams = default) {
+            if (!IsOwner) return;
+            switch (conclusion) {
+                case _Scripts.RaceConclusion.Win: {
+                    GameUIController.Instance.DisplayWinMessage();
+                    break;
+                }
+                case _Scripts.RaceConclusion.Lose: {
+                    GameUIController.Instance.DisplayLoseMessage();
+                    break;
+                }
+            }
+            DOVirtual.DelayedCall(4f, () => {
+                transform.SetPositionAndRotation(oldPos, oldRot);
+            });
         }
 
         #endregion
@@ -419,6 +430,7 @@ namespace _Scripts.NetCode {
 
         public static event Action<ulong, ulong> OnChallengeInitiateRequest;
         public static event Action<ulong, ulong, ChallengeResponse> OnChallengeResponse;
+        public static event Action<ulong, ulong> OnRaceFinish;
 
         #endregion
 
@@ -481,20 +493,27 @@ namespace _Scripts.NetCode {
             var myTransform = transform;
             if (challenger == OwnerClientId) {
                 StoreWorldPosAndRot(myTransform);
-
+                raceOpponentId = target;
                 targetClientArray[0] = challenger;
                 ClientRpcParams targetClientParams = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = targetClientArray } };
                 // spawn challenger
-                SpawnAtTrackClientRpc(challengerSpawn, spawnRotation, targetClientParams);
+                SpawnAtTrackClientRpc(challengerSpawn, spawnRotation, target, targetClientParams);
             }
             else if (target == OwnerClientId) {
                 StoreWorldPosAndRot(myTransform);
-
+                raceOpponentId = challenger;
                 targetClientArray[0] = target;
                 ClientRpcParams targetClientParams = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = targetClientArray } };
                 // spawn target
-                SpawnAtTrackClientRpc(targetSpawn, spawnRotation, targetClientParams);
+                SpawnAtTrackClientRpc(targetSpawn, spawnRotation, challenger, targetClientParams);
             }
+        }
+
+        private void OnRaceConclusionEvent(ulong id, RaceConclusion conclusion) {
+            if (id != OwnerClientId) return;
+            targetClientArray[0] = id;
+            ClientRpcParams targetClientParams = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = targetClientArray } };
+            RaceConclusionClientRpc(posBeforeSpawnForRace, rotBeforeSpawnForRace, conclusion, targetClientParams);
         }
 
         #endregion
@@ -505,10 +524,13 @@ namespace _Scripts.NetCode {
         private void SetUpListeners() {
             DuelHandler.OnBroadcastChallengeRequest += ChallengeRequestBroadcastEvent;
             DuelHandler.OnDuelBegin += OnDuelBeginEvent;
+            DuelHandler.RaceConclusionEvent += OnRaceConclusionEvent;
         }
 
         private void RemoveListeners() {
             DuelHandler.OnBroadcastChallengeRequest -= ChallengeRequestBroadcastEvent;
+            DuelHandler.OnDuelBegin -= OnDuelBeginEvent;
+            DuelHandler.RaceConclusionEvent -= OnRaceConclusionEvent;
         }
 
         private void InputEventSetup(bool isEnable) {

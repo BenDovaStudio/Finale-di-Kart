@@ -22,5 +22,13 @@ namespace _Scripts
         public const string RejectChallenge = "RejectChallenge";
 
         #endregion
+
+
+
+        #region Tags
+
+        public const string FinishTrigger = "FinishTrigger";
+
+        #endregion
     }
 }

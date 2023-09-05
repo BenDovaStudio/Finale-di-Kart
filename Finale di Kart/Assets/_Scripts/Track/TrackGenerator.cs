@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -11,6 +12,8 @@ namespace _Scripts.Track {
         // [SerializeField] private bool generateTrack;
 
         [SerializeField] private List<Track> trackPrefabs;
+
+        [SerializeField] private Track EndTrackPrefab;
 
         private List<List<Track>> tracks = new List<List<Track>>();
 
@@ -53,13 +56,14 @@ namespace _Scripts.Track {
 
         #region Custom Methods
 
-        public void GenerateTrack() {
-            if (!IsServer) return;
+        public int GenerateServerTrack(out Vector3 playerSpawn) {
+            playerSpawn = new Vector3(0, -10, 0);
+            if (!IsServer) return -1;
             // Debug.Log("Generating");
             var indexTrack = GetFreeTrack();
             if (indexTrack == -1) {
                 Debug.Log("Tracks Busy! Returning.");
-                return;
+                return -1;
             }
             // var indexTrack = 0;
             currentTrack = tracks[indexTrack];
@@ -71,6 +75,10 @@ namespace _Scripts.Track {
             var firstNode = Instantiate(trackPrefabs[0], spawnTransform.position, Quaternion.identity);
             firstNode.GetComponent<NetworkObject>().Spawn(true);
             firstNode.transform.SetParent(spawnTransform);
+            
+            // Player Spawn Offset +-1.5x, 0.15y, 2.5z
+            playerSpawn = firstNode.transform.position;
+            
             currentTrack.Add(firstNode);
 
 
@@ -80,26 +88,19 @@ namespace _Scripts.Track {
                 var spawnAtTransform = currentTrack[^1].GetEndNode(); // getting last spawned track from the list
 
                 bool shouldSpawn = true;
-
-
-                // Vector3 leftPoint =new Vector3(possibleEndPoint.pos, )
-
-                // Ray rayleft = new Ray(possibleEndPoint.position)
-
-                // Debug.Log($"");
-                // Debug.DrawRay(possibleEndPoint.position, possibleEndPoint.forward);
+                
                 var spawnedTrack = Instantiate(trackPrefabs[trackBlock], spawnAtTransform);
 
                 spawnedTrack.gameObject.SetActive(false);
-
-                // Player Spawn Offset +-1.5x, 0.15y, 2.5z
                 
-                var tempHolder = trackPrefabs[trackBlock].GetEndNode().position;
+                // var tempHolder = trackPrefabs[trackBlock].GetEndNode().position;
+                var tempHolder = spawnedTrack.GetEndNode().position;
 
                 var spawnPosition = new Vector3(tempHolder.x, tempHolder.y + 0.03f, tempHolder.z);
                 var possibleEndPoint = trackPrefabs[trackBlock].GetEndNode();
 
                 Ray ray = new Ray(spawnPosition, possibleEndPoint.forward);
+                
                 RaycastHit hit0, hit1, hit2;
                 if (Physics.Raycast(ray, out hit0, 1500f, trackMask)) {
                     Debug.Log($"Track collision possible, repeating iteration #{itr}");
@@ -132,14 +133,25 @@ namespace _Scripts.Track {
                     currentTrack.Add(spawnedTrack);
                 }
                 else {
-                    spawnedTrack.GetComponent<NetworkObject>().Despawn();
+                    // spawnedTrack.GetComponent<NetworkObject>().Despawn();
                     Destroy(spawnedTrack.gameObject);
-                    itr--;
+                    // itr--;
                 }
 
             }
 
-            // return indexTrack;
+            
+            var spawnLastTransform = currentTrack[^1].GetEndNode();
+            var lastTrack = Instantiate(EndTrackPrefab, spawnLastTransform);
+
+            currentTrack.Add(lastTrack);
+
+            return indexTrack;
+        }
+
+        private void GenerateTrack() {
+            Vector3 playerSpawn;
+            GenerateServerTrack(out playerSpawn);
         }
 
         private void DeletePreviousTrack() {
@@ -163,6 +175,16 @@ namespace _Scripts.Track {
 
             // Debug.Log($"Track Found at: {-1}");
             return -1;
+        }
+
+        private IEnumerator DrawRayPersistant(Vector3 startPos, Vector3 rotation, Color color) {
+            
+            Instantiate(new GameObject("RayObject"), startPos, Quaternion.identity);
+            while (true) {
+                // Debug.Log("DrawingRay");
+                Debug.DrawRay(startPos, rotation, color);
+                yield return new WaitForEndOfFrame();
+            }
         }
 
         #endregion

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using _Scripts.UI;
+using DG.Tweening;
 using Unity.Multiplayer.Tools.NetStatsMonitor;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
@@ -43,7 +44,7 @@ namespace _Scripts.Controllers {
 
 		private float lastUpdateTime;
 		private bool canUpdateLobby = true;
-		[SerializeField] private bool shouldUpdateLobby;
+		[SerializeField] private bool shouldUpdateLobby = true;
 
 		[SerializeField] private float lobbyQueryCooldown = 2.5f;
 
@@ -72,6 +73,15 @@ namespace _Scripts.Controllers {
 		[SerializeField] private Transform basicPrompt;
 		[SerializeField] private Transform waitingPrompt;
 		[SerializeField] private Transform affirmationPrompt;
+
+		#endregion
+
+
+
+		#region Race UI
+
+		[SerializeField] private Transform winContainer;
+		[SerializeField] private Transform loseContainer;
 
 		#endregion
 
@@ -213,6 +223,21 @@ namespace _Scripts.Controllers {
 
 		public void PromptDeactivateWhole() {
 			promptTransform.gameObject.SetActive(false);
+		}
+
+
+
+		public void DisplayWinMessage() {
+			winContainer.gameObject.SetActive(true);
+			DOVirtual.DelayedCall(3f, () => {
+				winContainer.gameObject.SetActive(false);
+			});
+		}
+		public void DisplayLoseMessage() {
+			loseContainer.gameObject.SetActive(true);
+			DOVirtual.DelayedCall(3f, () => {
+				loseContainer.gameObject.SetActive(false);
+			});
 		}
 
 	#endregion

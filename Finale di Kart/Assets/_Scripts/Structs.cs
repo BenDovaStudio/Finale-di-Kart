@@ -32,6 +32,7 @@ namespace _Scripts {
         [SerializeField] private int id;
         [SerializeField] private ulong challenger;
         [SerializeField] private ulong target;
+        [SerializeField] private int duelTrackIndex;
         public Coroutine TimerRoutine;
 
         public Duel(ulong challengerId, ulong targetId) {
@@ -39,6 +40,7 @@ namespace _Scripts {
             target = targetId;
             id = (int)(challengerId + targetId);
             TimerRoutine = null;
+            duelTrackIndex = -1;
         }
 
         public Duel(ulong challengerId, ulong targetId, Coroutine timerRoutine) {
@@ -46,6 +48,7 @@ namespace _Scripts {
             target = targetId;
             id = (int)(challengerId + targetId);
             TimerRoutine = timerRoutine;
+            duelTrackIndex = -1;
         }
 
         public int GetDuelId() {
@@ -58,6 +61,10 @@ namespace _Scripts {
 
         public ulong GetTarget() {
             return target;
+        }
+
+        public int GetTrackIndex() {
+            return duelTrackIndex;
         }
 
         #region Overrides for equality comparison
